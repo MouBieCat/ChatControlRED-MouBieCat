@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 專案資訊 -->
+    <name>ChatControlRed-MouBieCat</name>
+    <description>該插件針對 ChatControlRed 擴充，提供更方便的使用方式。</description>
+
+    <!-- 開發者資訊 -->
+    <developers>
+        <!-- MouBieCat -->
+        <developer>
+            <name>MouBieCat</name>
+            <url>https://github.com/MouBieCat</url>
+            <email>itsmoubie@gmail.com</email>
+        </developer>
+    </developers>
+
+    <!-- 工作群組 -->
+    <groupId>net.moubiecat</groupId>
+    <artifactId>ChatControlRed</artifactId>
+    <version>1.0.0</version>
+
+    <!-- 專案配置 -->
+    <properties>
+        <!-- Java 版本 -->
+        <java.version>17</java.version>
+        <!-- Maven 版本 -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!-- 編碼 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Bukkit API 版本 -->
+        <bukkit-api.version>1.20</bukkit-api.version>
+        <!-- Spigot API 版本 -->
+        <spigot-api.version>1.20.1-R0.1-SNAPSHOT</spigot-api.version>
+    </properties>
+
+    <!-- 雲端倉庫到本地倉庫 -->
+    <repositories>
+        <!-- Spigot -->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <!-- 依賴項目管理 -->
+    <dependencyManagement>
+        <!-- 依賴項目 -->
+        <dependencies>
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.2</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- jetbrains -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>23.0.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Spigot API -->
+            <dependency>
+                <groupId>org.spigotmc</groupId>
+                <artifactId>spigot-api</artifactId>
+                <version>${spigot-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- ChatControlRED -->
+            <dependency>
+                <groupId>org.mineacademy</groupId>
+                <artifactId>ChatControl-Red</artifactId>
+                <version>10.19.4</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mineacademy</groupId>
+                        <artifactId>Foundation</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- 導入依賴 -->
+    <dependencies>
+        <!-- junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <!-- jetbrains -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
+        <!-- Spigot API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+        </dependency>
+        <!-- ChatControlRED -->
+        <dependency>
+            <groupId>org.mineacademy</groupId>
+            <artifactId>ChatControl-Red</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 建置 -->
+    <build>
+        <!-- 資源檔 -->
+        <resources>
+            <!-- 資源 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <!-- 插件管理 -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <!-- maven-shade-plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- maven-compiler-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <!-- maven-shade-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

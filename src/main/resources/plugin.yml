@@ -1,0 +1,12 @@
+name: ChatControlRed-MouBieCat
+description: "該插件針對 ChatControlRed 擴充，提供更方便的使用方式。"
+
+author: MouBieCat
+website: https://github.com/moubiecat
+
+version: ${project.version}
+api-version: ${bukkit-api.version}
+depend:
+  - ChatControlRed
+
+main: net.moubiecat.chatcontrolred.MouBieCat
