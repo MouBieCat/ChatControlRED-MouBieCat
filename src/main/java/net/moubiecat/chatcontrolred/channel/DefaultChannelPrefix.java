@@ -3,17 +3,9 @@ package net.moubiecat.chatcontrolred.channel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultChannelPrefix extends ChannelPrefix {
-    /**
-     * @param channel 频道
-     */
-    public DefaultChannelPrefix(@NotNull String channel) {
-        this(channel, "", new ArrayList<>());
-    }
-
     public DefaultChannelPrefix(@NotNull String channel, @NotNull String display, @NotNull List<String> lore) {
         super("", channel, display, lore);
     }

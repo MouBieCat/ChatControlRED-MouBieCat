@@ -36,32 +36,6 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
         }
     }
 
-    /**
-     * 獲取頻道
-     *
-     * @param prefix 頻道前綴
-     * @return 頻道前綴
-     */
-    @Nullable
-    public ChannelPrefix getChannel(@NotNull String prefix) {
-        return channels.stream()
-                .filter(channel -> channel.getPrefix().equals(prefix))
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * 獲取預設頻道
-     *
-     * @return 頻道前綴
-     */
-    @NotNull
-    public ChannelPrefix getDefaultChannel() {
-        return channels.stream()
-                .filter(channel -> channel instanceof DefaultChannelPrefix)
-                .findFirst().orElseThrow();
-    }
-
     @NotNull
     public Collection<ChannelPrefix> getChannels() {
         return this.channels;

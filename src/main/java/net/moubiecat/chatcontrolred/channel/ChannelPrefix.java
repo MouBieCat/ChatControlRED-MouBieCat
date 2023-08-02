@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mineacademy.chatcontrol.model.Channel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelPrefix implements ChannelItem {
@@ -13,14 +12,6 @@ public class ChannelPrefix implements ChannelItem {
     private final String channel;
     private final String display;
     private final List<String> lore;
-
-    /**
-     * @param prefix  前缀
-     * @param channel 频道
-     */
-    public ChannelPrefix(@NotNull String prefix, @NotNull String channel) {
-        this(prefix, channel, channel, new ArrayList<>());
-    }
 
     /**
      * @param prefix  前缀
