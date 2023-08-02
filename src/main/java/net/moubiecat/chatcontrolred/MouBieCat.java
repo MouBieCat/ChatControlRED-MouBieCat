@@ -2,6 +2,8 @@ package net.moubiecat.chatcontrolred;
 
 import net.moubiecat.chatcontrolred.channel.ChannelManager;
 import net.moubiecat.chatcontrolred.listener.ChatListener;
+import net.moubiecat.chatcontrolred.listener.CommandListener;
+import net.moubiecat.chatcontrolred.listener.InventoryListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,8 @@ public final class MouBieCat extends JavaPlugin {
         channelManager.onLoad(this.getConfig());
         // 註冊事件監聽器
         this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        this.getServer().getPluginManager().registerEvents(new CommandListener(), this);
     }
 
     @Override
@@ -27,8 +31,7 @@ public final class MouBieCat extends JavaPlugin {
     }
 
     public void onReload() {
-        // 保存配置文件
-        this.saveConfig();
+        this.reloadConfig();
         // 處理 channelManager 的配置文件
         channelManager.onReload(this.getConfig());
     }

@@ -8,8 +8,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public final class ChannelManager implements Mappable<FileConfiguration> {
     private final List<ChannelPrefix> channels = new LinkedList<>();
@@ -32,10 +34,6 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
                 return;
             }
         }
-
-        // 如果沒有，則發送到預設頻道
-        final ChannelPrefix defaultChannel = this.getDefaultChannel();
-        defaultChannel.sendMessageToChannel(player, message);
     }
 
     /**
@@ -62,6 +60,11 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
         return channels.stream()
                 .filter(channel -> channel instanceof DefaultChannelPrefix)
                 .findFirst().orElseThrow();
+    }
+
+    @NotNull
+    public Collection<ChannelPrefix> getChannels() {
+        return this.channels;
     }
 
     @Override
@@ -91,29 +94,36 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
      * @param file 配置文件
      */
     private void parseChannelPrefix(@NotNull FileConfiguration file) {
-        // 首先處理 `Channels:` 內容
         final ConfigurationSection channelsSection = file.getConfigurationSection("Channels");
+
+        // 處理 `Channels:` 內容
         if (channelsSection != null) {
             // 遍歷所有頻道前綴
-            for (final String prefix : channelsSection.getKeys(false)) {
-                // 獲取頻道名稱
-                final String channel = file.getString("Channels." + prefix);
-                if (channel != null) {
-                    // 創建頻道前綴
-                    final ChannelPrefix channelPrefix = new ChannelPrefix(prefix, channel);
-                    // 添加到頻道列表
-                    channels.add(channelPrefix);
-                }
+            final Set<String> channelsPrefix = channelsSection.getKeys(false);
+
+            // 遍歷所有頻道前綴
+            for (final String prefix : channelsPrefix) {
+                final String channelName = file.getString("Channels." + prefix);
+                if (channelName == null)
+                    continue;
+                final String channelDisplay = file.getString(prefix + ".display");
+                if (channelDisplay == null)
+                    continue;
+                final List<String> lore = file.getStringList(prefix + ".lore");
+
+                this.channels.add(new ChannelPrefix(prefix, channelName, channelDisplay, lore));
             }
         }
 
-        // 最後處理 `DefaultChannel:` 內容
+        // 處理 `DefaultChannel:` 內容
         final String defaultChannel = file.getString("DefaultChannel");
         if (defaultChannel != null) {
-            // 創建頻道前綴
-            final ChannelPrefix channelPrefix = new DefaultChannelPrefix(defaultChannel);
-            // 添加到頻道列表
-            channels.add(channelPrefix);
+            final String channelDisplay = file.getString("default.display");
+            if (channelDisplay == null)
+                return;
+            final List<String> lore = file.getStringList("default.lore");
+
+            this.channels.add(new DefaultChannelPrefix(defaultChannel, channelDisplay, lore));
         }
     }
 

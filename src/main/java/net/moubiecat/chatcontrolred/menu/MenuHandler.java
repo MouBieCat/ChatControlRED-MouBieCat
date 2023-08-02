@@ -10,17 +10,15 @@ public interface MenuHandler {
      * 選單開啟時觸發
      *
      * @param event 事件
-     * @return 是否取消事件
      */
-    boolean onOpen(@NotNull InventoryOpenEvent event);
+    void onOpen(@NotNull InventoryOpenEvent event);
 
     /**
      * 選單點選時觸發
      *
      * @param event 事件
-     * @return 是否取消事件
      */
-    boolean onClick(@NotNull InventoryClickEvent event);
+    void onClick(@NotNull InventoryClickEvent event);
 
     /**
      * 選單關閉時觸發

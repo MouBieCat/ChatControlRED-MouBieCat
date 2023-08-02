@@ -5,17 +5,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mineacademy.chatcontrol.model.Channel;
 
-public class ChannelPrefix {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ChannelPrefix implements ChannelItem {
     private final String prefix;
     private final String channel;
+    private final String display;
+    private final List<String> lore;
 
     /**
      * @param prefix  前缀
      * @param channel 频道
      */
     public ChannelPrefix(@NotNull String prefix, @NotNull String channel) {
+        this(prefix, channel, channel, new ArrayList<>());
+    }
+
+    /**
+     * @param prefix  前缀
+     * @param channel 频道
+     */
+    public ChannelPrefix(@NotNull String prefix, @NotNull String channel, @NotNull String display, @NotNull List<String> lore) {
         this.prefix = prefix;
         this.channel = channel;
+        this.display = display;
+        this.lore = lore;
     }
 
     /**
@@ -57,19 +72,14 @@ public class ChannelPrefix {
                 // 處理裁切的訊息
                 final String finalMessage = message.substring(this.prefix.length());
 
-                // ---- API : Begin
-                // ChatControlAPI.sendMessage(sender, this.channel, finalMessage);
-                // return true;
-                // ==== API : End
-
-                // ---- Core : Begin
+                // 獲取頻道
                 final Channel channel = Channel.findChannel(this.channel);
+                // 判斷是否在頻道中
                 if (channel.isInChannel(sender))
                     channel.sendMessage(sender, finalMessage, true);
                 else
                     sender.sendMessage("§c系統 §7㇣ §f你沒有加入 §e" + this.channel + " §f因此無法發送訊息。");
                 return true;
-                // ==== Core : End
             } catch (final IndexOutOfBoundsException ignored) {
             }
         }
@@ -95,5 +105,25 @@ public class ChannelPrefix {
     @NotNull
     public final String getChannel() {
         return channel;
+    }
+
+    /**
+     * 獲取頻道顯示名稱
+     *
+     * @return 名稱
+     */
+    @Override
+    public final @NotNull String getDisplay() {
+        return this.display;
+    }
+
+    /**
+     * 獲取頻道描述
+     *
+     * @return 描述
+     */
+    @Override
+    public final @NotNull List<String> getLore() {
+        return this.lore;
     }
 }
