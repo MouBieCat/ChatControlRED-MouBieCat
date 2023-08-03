@@ -3,11 +3,10 @@ package net.moubiecat.chatcontrolred.channel;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mineacademy.chatcontrol.model.Channel;
 
 import java.util.List;
 
-public class ChannelPrefix implements ChannelItem {
+public class ChannelPrefix implements Channel, ChannelItem {
     private final String prefix;
     private final String channel;
     private final String display;
@@ -62,9 +61,12 @@ public class ChannelPrefix implements ChannelItem {
             try {
                 // 處理裁切的訊息
                 final String finalMessage = message.substring(this.prefix.length());
+                // 判斷是否為空
+                if (finalMessage.isEmpty())
+                    return true;
 
                 // 獲取頻道
-                final Channel channel = Channel.findChannel(this.channel);
+                final org.mineacademy.chatcontrol.model.Channel channel = org.mineacademy.chatcontrol.model.Channel.findChannel(this.channel);
                 // 判斷是否在頻道中
                 if (channel.isInChannel(sender))
                     channel.sendMessage(sender, finalMessage, true);

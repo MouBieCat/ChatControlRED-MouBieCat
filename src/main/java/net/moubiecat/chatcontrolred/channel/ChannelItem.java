@@ -4,14 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface ChannelItem {
-    /**
-     * 獲取頻道名稱
-     *
-     * @return 名稱
-     */
-    @NotNull String getChannel();
-
+public interface ChannelItem extends Channel {
     /**
      * 獲取頻道顯示名稱
      *

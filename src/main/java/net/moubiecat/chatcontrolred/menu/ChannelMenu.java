@@ -1,37 +1,48 @@
 package net.moubiecat.chatcontrolred.menu;
 
-import net.moubiecat.chatcontrolred.ItemService;
 import net.moubiecat.chatcontrolred.MouBieCat;
 import net.moubiecat.chatcontrolred.channel.ChannelItem;
 import net.moubiecat.chatcontrolred.channel.ChannelPrefix;
+import net.moubiecat.chatcontrolred.service.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mineacademy.chatcontrol.model.Channel;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 public final class ChannelMenu extends Menu {
-    private final static int[] BORDER = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8,
-            9, 17,
-            18, 19, 20, 21, 22, 23, 24, 25, 26
-    };
-    private final static int CONTEXT_LENGTH = 7;
-    private final static NamespacedKey CHANNEL_KEY = new NamespacedKey(MouBieCat.getInstance(), "channel");
+    private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInstance(), "action");
+
+    private final static int[] BORDER_SLOT = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+    private final static int PREVIOUS_PAGE_SLOT = 9;
+    private final static int NEXT_PAGE_SLOT = 17;
+    private final static int CHANNEL_BUTTON_SLOTS = 7;
+
+    private final ItemStack borderItem = ItemService.build(Material.BLACK_STAINED_GLASS_PANE)
+            .name(" ")
+            .build()
+            .orElseThrow();
+    private final ItemStack previousItem = ItemService.build(Material.ARROW)
+            .name("§f<-")
+            .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, "previous")
+            .build()
+            .orElseThrow();
+    private final ItemStack nextItem = ItemService.build(Material.ARROW)
+            .name("§f->")
+            .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, "next")
+            .build()
+            .orElseThrow();
 
     private final Collection<ChannelItem> channels = new LinkedList<>();
 
@@ -39,10 +50,10 @@ public final class ChannelMenu extends Menu {
      * 建構子
      *
      * @param view     開啟選單的玩家
-     * @param channels 頻道
+     * @param channels 所有頻道
      */
-    public ChannelMenu(@NotNull Player view, Collection<ChannelPrefix> channels) {
-        super(view, "        &8 ▼ 玩家頻道配置選單 ▼ ", (channels.size() / CONTEXT_LENGTH) + 1, MenuSize.THREE);
+    public ChannelMenu(@NotNull Player view, @NotNull Collection<ChannelPrefix> channels) {
+        super(view, "        §8 ▼ 玩家頻道配置選單 ▼ ", channels.size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
         this.channels.addAll(channels);
     }
 
@@ -53,68 +64,67 @@ public final class ChannelMenu extends Menu {
     protected void initialize() {
         // 清除所有內容
         this.clear();
-        // 設置邊框
-        this.drawBorder();
+        // 繪製外框
+        this.drawBorderButton();
+        // 繪製翻頁按鈕
+        this.drawPageButton();
         // 繪製頻道
-        this.drawChannels();
-    }
-
-    private void drawBorder() {
-        final ItemStack itemStack = ItemService.build(Material.GRAY_STAINED_GLASS_PANE).name(" ").build().orElse(new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
-        for (final int slot : ChannelMenu.BORDER)
-            this.getInventory().setItem(slot, itemStack);
-    }
-
-    private void drawChannels() {
-        // 如果為第二頁，則獲取第二頁的頻道
-        this.channels.stream().skip((long) (this.page - 1) * CONTEXT_LENGTH).limit(CONTEXT_LENGTH).forEach(channelItem -> {
-            final Channel channel = Channel.findChannel(channelItem.getChannel());
-            final boolean inChannel = channel.isInChannel(this.view);
-            final String display = channelItem.getDisplay();
-            final List<String> lore = channelItem.getLore();
-
-            ItemStack itemStack;
-            if (inChannel)
-                itemStack = ItemService.build(Material.BELL)
-                        .name(display + " &2[已加入]")
-                        .lore(lore)
-                        .enchantment(Enchantment.DURABILITY, 3)
-                        .flags(ItemFlag.HIDE_ENCHANTS)
-                        .addPersistentDataContainer(CHANNEL_KEY, PersistentDataType.STRING, channelItem.getChannel())
-                        .build()
-                        .orElseThrow();
-
-            else
-                itemStack = ItemService.build(Material.BELL)
-                        .name(display + " &c[未加入]")
-                        .lore(lore)
-                        .addPersistentDataContainer(CHANNEL_KEY, PersistentDataType.STRING, channelItem.getChannel())
-                        .build()
-                        .orElseThrow();
-            this.getInventory().addItem(itemStack);
-        });
-    }
-
-    @Nullable
-    private String parsingChannel(@Nullable ItemStack itemStack) {
-        if (itemStack == null)
-            return "";
-
-        final ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null)
-            return "";
-
-        return itemMeta.getPersistentDataContainer().get(CHANNEL_KEY, PersistentDataType.STRING);
+        this.drawChannelButtons();
     }
 
     /**
-     * 選單開啟時觸發
-     *
-     * @param event 事件
+     * 繪製選單邊框
      */
-    @Override
-    public void onOpen(@NotNull InventoryOpenEvent event) {
-        // 不做任何事情
+    private void drawBorderButton() {
+        Arrays.stream(ChannelMenu.BORDER_SLOT).forEach(slot -> this.getInventory().setItem(slot, this.borderItem));
+    }
+
+    /**
+     * 繪製翻頁按鈕
+     */
+    private void drawPageButton() {
+        if (this.page > 1)
+            this.getInventory().setItem(PREVIOUS_PAGE_SLOT, this.previousItem);
+
+        if (this.page < this.max)
+            this.getInventory().setItem(NEXT_PAGE_SLOT, this.nextItem);
+    }
+
+    /**
+     * 繪製頻道按鈕
+     *
+     * @param channelItem 頻道物品
+     * @return 頻道按鈕
+     */
+    @NotNull
+    private ItemStack buildChannelButton(@NotNull ChannelItem channelItem) {
+        final Channel channel = Channel.findChannel(channelItem.getChannel());
+        final boolean inChannel = channel.isInChannel(this.view);
+        return inChannel ?
+                ItemService.build(Material.BELL)
+                        .name(channelItem.getDisplay() + " §2[已加入]§r")
+                        .lore(channelItem.getLore())
+                        .enchantment(Enchantment.DURABILITY, 3)
+                        .flags(ItemFlag.HIDE_ENCHANTS)
+                        .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelItem.getChannel())
+                        .build()
+                        .orElseThrow() :
+                ItemService.build(Material.BELL)
+                        .name(channelItem.getDisplay() + " §c[未加入]§r")
+                        .lore(channelItem.getLore())
+                        .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelItem.getChannel())
+                        .build()
+                        .orElseThrow();
+    }
+
+    /**
+     * 繪製所有頻道按鈕
+     */
+    private void drawChannelButtons() {
+        this.channels.stream().skip((long) (this.page - 1) * CHANNEL_BUTTON_SLOTS).limit(CHANNEL_BUTTON_SLOTS).forEach(channelItem -> {
+            final ItemStack itemStack = this.buildChannelButton(channelItem);
+            this.getInventory().addItem(itemStack);
+        });
     }
 
     /**
@@ -126,35 +136,55 @@ public final class ChannelMenu extends Menu {
     public void onClick(@NotNull InventoryClickEvent event) {
         event.setCancelled(true);
 
+        // 點擊的不是項目
         final Player player = (Player) event.getWhoClicked();
-        // 解析頻道名稱
-        final String channelName = this.parsingChannel(event.getCurrentItem());
-        // 如果頻道名稱為空，則不做任何事情
-        if (channelName == null)
+        final ItemStack currentItem = event.getCurrentItem();
+        if (currentItem == null)
             return;
 
-        // 獲取頻道
-        final Channel channel = Channel.findChannel(channelName);
-        // 如果玩家在頻道內，則離開頻道，否則加入頻道
-        if (channel.isInChannel(player)) {
-            channel.leavePlayer(player);
-            player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3.0F, 3.0F);
-        } else {
-            channel.joinPlayer(player, Channel.Mode.READ);
-            player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
+        // 判斷 ItemMeta
+        final ItemMeta itemMeta = currentItem.getItemMeta();
+        if (itemMeta == null)
+            return;
+
+        // 判斷是否有 Action
+        final String action = itemMeta.getPersistentDataContainer().get(ACTION_KEY, PersistentDataType.STRING);
+        if (action == null)
+            return;
+
+        // 判斷 Action
+        switch (action) {
+            // 點擊翻頁按鈕
+            case "previous" -> {
+                this.previous();
+                player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
+            }
+
+
+            // 點擊翻頁按鈕
+            case "next" -> {
+                this.next();
+                player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
+            }
+
+
+            // 點擊頻道按鈕
+            default -> {
+                final Channel channel = Channel.findChannel(action);
+                // 判斷是否在頻道中
+                if (channel.isInChannel(player)) {
+                    // 離開頻道
+                    channel.leavePlayer(player);
+                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
+                } else {
+                    // 加入頻道
+                    channel.joinPlayer(player, Channel.Mode.READ);
+                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3.0F, 5.0F);
+                }
+
+                // 重新開啟選單
+                this.open();
+            }
         }
-
-        // 重新開啟選單
-        this.open(this.page);
-    }
-
-    /**
-     * 選單關閉時觸發
-     *
-     * @param event 事件
-     */
-    @Override
-    public void onClose(@NotNull InventoryCloseEvent event) {
-        // 不做任何事情
     }
 }

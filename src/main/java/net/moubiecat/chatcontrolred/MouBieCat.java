@@ -4,18 +4,23 @@ import net.moubiecat.chatcontrolred.channel.ChannelManager;
 import net.moubiecat.chatcontrolred.listener.ChatListener;
 import net.moubiecat.chatcontrolred.listener.CommandListener;
 import net.moubiecat.chatcontrolred.listener.InventoryListener;
+import net.moubiecat.chatcontrolred.setting.ConfigYaml;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public final class MouBieCat extends JavaPlugin {
+    private ConfigYaml configYaml;
+
     private final ChannelManager channelManager = new ChannelManager();
 
     @Override
     public void onEnable() {
         // 映射配置文件
-        this.saveDefaultConfig();
-        // 處理 channelManager 的配置文件
-        channelManager.onLoad(this.getConfig());
+        this.configYaml = new ConfigYaml(this);
+
+        // 載入配置文件
+        this.channelManager.onLoad(this.configYaml);
+
         // 註冊事件監聽器
         this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
@@ -24,16 +29,19 @@ public final class MouBieCat extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // 保存配置文件
-        this.saveConfig();
         // 處理 channelManager 的配置文件
-        channelManager.onSave(this.getConfig());
+        this.channelManager.onSave(this.configYaml);
+
+        // 保存配置文件
+        this.configYaml.save();
     }
 
     public void onReload() {
-        this.reloadConfig();
+        // 重載配置文件
+        this.configYaml.load();
+
         // 處理 channelManager 的配置文件
-        channelManager.onReload(this.getConfig());
+        this.channelManager.onReload(this.configYaml);
     }
 
     /**

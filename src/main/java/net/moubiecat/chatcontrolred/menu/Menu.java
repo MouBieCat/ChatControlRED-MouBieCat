@@ -3,15 +3,19 @@ package net.moubiecat.chatcontrolred.menu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class Menu implements InventoryHolder, MenuHandler {
-    private final Inventory inventory;
+    protected final Inventory inventory;
     protected final Player view;
-    protected final int max;
     protected final MenuSize size;
+
+    protected final int max;
     protected int page = 1;
 
     /**
@@ -31,19 +35,32 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
 
     /**
      * 開啟選單
-     *
-     * @param page 頁數
      */
-    public final void open(int page) {
-        this.page = page;
-        if (this.page > this.max) {
+    public final void open() {
+        if (this.page > this.max)
             this.page = this.max;
-        } else if (this.page < 1) {
+
+        else if (this.page < 1)
             this.page = 1;
-        }
 
         this.initialize();
         this.view.openInventory(this.inventory);
+    }
+
+    /**
+     * 下一頁
+     */
+    public void next() {
+        this.page++;
+        this.open();
+    }
+
+    /**
+     * 上一頁
+     */
+    public void previous() {
+        this.page--;
+        this.open();
     }
 
     /**
@@ -67,5 +84,32 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
     @Override
     public final Inventory getInventory() {
         return this.inventory;
+    }
+
+    /**
+     * InventoryOpenEvent 處理
+     *
+     * @param event 事件
+     */
+    @Override
+    public void onOpen(@NotNull InventoryOpenEvent event) {
+    }
+
+    /**
+     * InventoryClickEvent 處理
+     *
+     * @param event 事件
+     */
+    @Override
+    public void onClick(@NotNull InventoryClickEvent event) {
+    }
+
+    /**
+     * InventoryCloseEvent 處理
+     *
+     * @param event 事件
+     */
+    @Override
+    public void onClose(@NotNull InventoryCloseEvent event) {
     }
 }

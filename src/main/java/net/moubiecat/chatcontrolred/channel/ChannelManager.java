@@ -1,9 +1,8 @@
 package net.moubiecat.chatcontrolred.channel;
 
-import net.moubiecat.chatcontrolred.Mappable;
 import net.moubiecat.chatcontrolred.MouBieCat;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
+import net.moubiecat.chatcontrolred.setting.ConfigYaml;
+import net.moubiecat.chatcontrolred.setting.Mappable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public final class ChannelManager implements Mappable<FileConfiguration> {
+public final class ChannelManager implements Mappable<ConfigYaml> {
     private final List<ChannelPrefix> channels = new LinkedList<>();
 
     /**
@@ -30,9 +29,8 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
         // 發送到指定頻道
         for (final ChannelPrefix channel : this.channels) {
             // 如果發送成功，則不再繼續
-            if (channel.sendMessageToChannel(player, message)) {
+            if (channel.sendMessageToChannel(player, message))
                 return;
-            }
         }
     }
 
@@ -42,14 +40,14 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
     }
 
     @Override
-    public void onLoad(@NotNull FileConfiguration file) {
+    public void onLoad(@NotNull ConfigYaml file) {
         // 解析頻道列表
         this.parseChannelPrefix(file);
         this.printChannels();
     }
 
     @Override
-    public void onReload(@NotNull FileConfiguration file) {
+    public void onReload(@NotNull ConfigYaml file) {
         // 清空頻道列表
         this.channels.clear();
         // 重新解析頻道列表
@@ -58,8 +56,8 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
     }
 
     @Override
-    public void onSave(@NotNull FileConfiguration file) {
-        // 沒有任何保存內容
+    public void onSave(@NotNull ConfigYaml file) {
+        // 沒有任何需要保存的內容
     }
 
     /**
@@ -67,46 +65,32 @@ public final class ChannelManager implements Mappable<FileConfiguration> {
      *
      * @param file 配置文件
      */
-    private void parseChannelPrefix(@NotNull FileConfiguration file) {
-        final ConfigurationSection channelsSection = file.getConfigurationSection("Channels");
+    private void parseChannelPrefix(@NotNull ConfigYaml file) {
+        // 獲取所有頻道前綴
+        final Set<String> channels = file.getChannels();
 
-        // 處理 `Channels:` 內容
-        if (channelsSection != null) {
-            // 遍歷所有頻道前綴
-            final Set<String> channelsPrefix = channelsSection.getKeys(false);
+        // 遍歷所有頻道前綴
+        for (final String channel : channels) {
+            // 解析頻道名稱、顯示名稱、描述
+            final String channelName = file.getChannel(channel);
+            final String channelDisplay = file.getChannelDisplay(channel);
+            final List<String> channelLore = file.getChannelLore(channel);
 
-            // 遍歷所有頻道前綴
-            for (final String prefix : channelsPrefix) {
-                final String channelName = file.getString("Channels." + prefix);
-                if (channelName == null)
-                    continue;
-                final String channelDisplay = file.getString(prefix + ".display");
-                if (channelDisplay == null)
-                    continue;
-                final List<String> lore = file.getStringList(prefix + ".lore");
-
-                this.channels.add(new ChannelPrefix(prefix, channelName, channelDisplay, lore));
-            }
+            // 添加頻道前綴
+            this.channels.add(new ChannelPrefix(channel, channelName, channelDisplay, channelLore));
         }
 
-        // 處理 `DefaultChannel:` 內容
-        final String defaultChannel = file.getString("DefaultChannel");
-        if (defaultChannel != null) {
-            final String channelDisplay = file.getString("default.display");
-            if (channelDisplay == null)
-                return;
-            final List<String> lore = file.getStringList("default.lore");
+        // 獲取預設頻道前綴
+        final String defaultChannel = file.getDefaultChannel();
+        final String defaultChannelDisplay = file.getDefaultChannelDisplay();
+        final List<String> defaultChannelLore = file.getDefaultChannelLore();
 
-            this.channels.add(new DefaultChannelPrefix(defaultChannel, channelDisplay, lore));
-        }
+        // 添加預設頻道前綴
+        this.channels.add(new DefaultChannelPrefix(defaultChannel, defaultChannelDisplay, defaultChannelLore));
     }
 
     public void printChannels() {
-        for (final ChannelPrefix prefix : this.channels) {
-            if (prefix instanceof DefaultChannelPrefix)
-                MouBieCat.getInstance().getLogger().info("Default" + " -> " + prefix.getChannel());
-            else
-                MouBieCat.getInstance().getLogger().info(prefix.getPrefix() + " -> " + prefix.getChannel());
-        }
+        this.channels.forEach(
+                channelPrefix -> MouBieCat.getInstance().getLogger().info(channelPrefix.getPrefix() + " -> " + channelPrefix.getChannel()));
     }
 }

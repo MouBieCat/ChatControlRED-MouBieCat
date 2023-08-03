@@ -22,8 +22,9 @@ public class CommandListener implements Listener {
             event.setCancelled(true);
 
             // 開啟頻道選單
-            final ChannelMenu menu = new ChannelMenu(event.getPlayer(), MouBieCat.getInstance().getChannelManager().getChannels());
-            menu.open(1);
+            new ChannelMenu(
+                    event.getPlayer(),
+                    MouBieCat.getInstance().getChannelManager().getChannels()).open();
         }
     }
 }
