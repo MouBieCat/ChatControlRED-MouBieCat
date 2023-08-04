@@ -84,4 +84,14 @@ public final class ConfigYaml extends Yaml {
     public List<String> getDefaultChannelLore() {
         return this.getConfiguration().getStringList("Default.Lore");
     }
+
+    /**
+     * 獲取要覆蓋的指令別名
+     *
+     * @return 指令別名
+     */
+    @NotNull
+    public List<String> getCommandAliases() {
+        return this.getConfiguration().getStringList("CommandAliases");
+    }
 }

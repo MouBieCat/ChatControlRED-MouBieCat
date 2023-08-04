@@ -7,6 +7,7 @@ import net.moubiecat.chatcontrolred.service.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -52,7 +53,7 @@ public final class ChannelMenu extends Menu {
      * @param view     開啟選單的玩家
      * @param channels 所有頻道
      */
-    public ChannelMenu(@NotNull Player view, @NotNull Collection<ChannelPrefix> channels) {
+    private ChannelMenu(@NotNull Player view, @NotNull Collection<ChannelPrefix> channels) {
         super(view, "        §8 ▼ 玩家頻道配置選單 ▼ ", channels.size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
         this.channels.addAll(channels);
     }
@@ -76,7 +77,7 @@ public final class ChannelMenu extends Menu {
      * 繪製選單邊框
      */
     private void drawBorderButton() {
-        Arrays.stream(ChannelMenu.BORDER_SLOT).forEach(slot -> this.getInventory().setItem(slot, this.borderItem));
+        Arrays.stream(ChannelMenu.BORDER_SLOT).forEach(slot -> this.inventory.setItem(slot, this.borderItem));
     }
 
     /**
@@ -84,10 +85,10 @@ public final class ChannelMenu extends Menu {
      */
     private void drawPageButton() {
         if (this.page > 1)
-            this.getInventory().setItem(PREVIOUS_PAGE_SLOT, this.previousItem);
+            this.inventory.setItem(PREVIOUS_PAGE_SLOT, this.previousItem);
 
         if (this.page < this.max)
-            this.getInventory().setItem(NEXT_PAGE_SLOT, this.nextItem);
+            this.inventory.setItem(NEXT_PAGE_SLOT, this.nextItem);
     }
 
     /**
@@ -121,9 +122,10 @@ public final class ChannelMenu extends Menu {
      * 繪製所有頻道按鈕
      */
     private void drawChannelButtons() {
-        this.channels.stream().skip((long) (this.page - 1) * CHANNEL_BUTTON_SLOTS).limit(CHANNEL_BUTTON_SLOTS).forEach(channelItem -> {
+        this.channels.stream().skip(
+                (long) (this.page - 1) * CHANNEL_BUTTON_SLOTS).limit(CHANNEL_BUTTON_SLOTS).forEach(channelItem -> {
             final ItemStack itemStack = this.buildChannelButton(channelItem);
-            this.getInventory().addItem(itemStack);
+            this.inventory.addItem(itemStack);
         });
     }
 
@@ -186,5 +188,16 @@ public final class ChannelMenu extends Menu {
                 this.open();
             }
         }
+    }
+
+    /**
+     * 開啟選單
+     *
+     * @param sender 命令發送者
+     */
+    public static void openMenu(@NotNull CommandSender sender) {
+        if (sender instanceof Player player)
+            new ChannelMenu(player, MouBieCat.getInstance().getChannelManager().getChannels())
+                    .open();
     }
 }

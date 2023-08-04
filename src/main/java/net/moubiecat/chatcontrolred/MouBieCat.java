@@ -1,10 +1,12 @@
 package net.moubiecat.chatcontrolred;
 
 import net.moubiecat.chatcontrolred.channel.ChannelManager;
+import net.moubiecat.chatcontrolred.command.MBChatControl;
 import net.moubiecat.chatcontrolred.listener.ChatListener;
 import net.moubiecat.chatcontrolred.listener.CommandListener;
 import net.moubiecat.chatcontrolred.listener.InventoryListener;
 import net.moubiecat.chatcontrolred.setting.ConfigYaml;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,10 +23,15 @@ public final class MouBieCat extends JavaPlugin {
         // 載入配置文件
         this.channelManager.onLoad(this.configYaml);
 
+        // 註冊指令
+        final PluginCommand mainCommand = this.getCommand("mbchatcontrol");
+        if (mainCommand != null)
+            mainCommand.setExecutor(new MBChatControl());
+
         // 註冊事件監聽器
         this.getServer().getPluginManager().registerEvents(new ChatListener(), this);
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
-        this.getServer().getPluginManager().registerEvents(new CommandListener(), this);
+        this.getServer().getPluginManager().registerEvents(new CommandListener(this.configYaml), this);
     }
 
     @Override

@@ -10,3 +10,12 @@ depend:
   - ChatControlRed
 
 main: net.moubiecat.chatcontrolred.MouBieCat
+
+commands:
+  mbchatcontrol:
+    description: "ChatControlRed 擴充指令。"
+
+permissions:
+    mbchatcontrol.admin:
+        description: "ChatControlRed 擴充指令管理員權限。"
+        default: op

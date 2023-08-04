@@ -5,6 +5,9 @@ Channels:
   '@': "設施頻道"
 DefaultChannel: "範圍頻道"
 
+CommandAliases:
+  - "/channel"
+
 '#':
   Display: '&7▶ &e遊戲頻道'
   Lore:
