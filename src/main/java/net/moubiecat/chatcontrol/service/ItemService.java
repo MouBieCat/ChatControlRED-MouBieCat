@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrolred.service;
+package net.moubiecat.chatcontrol.service;
 
 import com.google.common.collect.Multimap;
 import org.bukkit.ChatColor;

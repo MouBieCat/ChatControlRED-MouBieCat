@@ -1,6 +1,7 @@
-package net.moubiecat.chatcontrolred.listener;
+package net.moubiecat.chatcontrol.listener;
 
-import net.moubiecat.chatcontrolred.menu.MenuHandler;
+import net.moubiecat.chatcontrol.MouBieCat;
+import net.moubiecat.chatcontrol.menu.MenuHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;

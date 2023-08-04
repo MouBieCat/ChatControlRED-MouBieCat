@@ -1,7 +1,7 @@
-package net.moubiecat.chatcontrolred.menu;
+package net.moubiecat.chatcontrol.menu;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -16,7 +16,7 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
     protected final MenuSize size;
 
     protected final int max;
-    protected int page = 1;
+    private int page = 1;
 
     /**
      * 建構子
@@ -30,7 +30,7 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
         this.view = view;
         this.max = max;
         this.size = size;
-        this.inventory = Bukkit.createInventory(this, this.size.getSize(), ChatColor.translateAlternateColorCodes('&', title));
+        this.inventory = Bukkit.createInventory(this, this.size.getSize(), title);
     }
 
     /**
@@ -43,8 +43,21 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
         else if (this.page < 1)
             this.page = 1;
 
-        this.initialize();
+        this.initialize(this.page);
         this.view.openInventory(this.inventory);
+    }
+
+    /**
+     * 重新整理選單
+     */
+    public final void refresh() {
+        if (this.page > this.max)
+            this.page = this.max;
+
+        else if (this.page < 1)
+            this.page = 1;
+
+        this.initialize(this.page);
     }
 
     /**
@@ -52,7 +65,8 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      */
     public void next() {
         this.page++;
-        this.open();
+        this.refresh();
+        this.view.playSound(this.view, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
     }
 
     /**
@@ -60,20 +74,16 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      */
     public void previous() {
         this.page--;
-        this.open();
+        this.refresh();
+        this.view.playSound(this.view, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
     }
 
     /**
      * 初始化選單內容
+     *
+     * @param page 頁數
      */
-    protected abstract void initialize();
-
-    /**
-     * 清除選單內容
-     */
-    protected final void clear() {
-        this.inventory.clear();
-    }
+    protected abstract void initialize(int page);
 
     /**
      * 取得選單實例

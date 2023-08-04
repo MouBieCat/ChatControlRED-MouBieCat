@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrolred.menu;
+package net.moubiecat.chatcontrol.menu;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;

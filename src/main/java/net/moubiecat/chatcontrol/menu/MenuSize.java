@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrolred.menu;
+package net.moubiecat.chatcontrol.menu;
 
 public enum MenuSize {
     ONE(9),     // 一行
@@ -8,7 +8,6 @@ public enum MenuSize {
     FIVE(45),   // 五行
     SIX(54);    // 六行
 
-    // 大小
     private final int size;
 
     /**

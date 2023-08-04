@@ -21,7 +21,7 @@
     <!-- 工作群組 -->
     <groupId>net.moubiecat</groupId>
     <artifactId>ChatControlRed</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <!-- 專案配置 -->
     <properties>
@@ -123,6 +123,8 @@
                 <includes>
                     <include>plugin.yml</include>
                     <include>config.yml</include>
+                    <include>channels.yml</include>
+                    <include>message.yml</include>
                 </includes>
             </resource>
         </resources>
