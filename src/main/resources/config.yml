@@ -9,6 +9,7 @@ CommandAliases:
   - "/channel"
 
 '#':
+  Material: "CHERRY_HANGING_SIGN"
   Display: '&7▶ &e遊戲頻道'
   Lore:
     - "&r"
@@ -20,6 +21,7 @@ CommandAliases:
     - "&r"
     - "&9點擊加入或離開頻道。"
 '!':
+  Material: "BAMBOO_HANGING_SIGN"
   Display: '&7▶ &e閒聊頻道'
   Lore:
     - "&r"
@@ -31,6 +33,7 @@ CommandAliases:
     - "&r"
     - "&9點擊加入或離開頻道。"
 $:
+  Material: "JUNGLE_HANGING_SIGN"
   Display: '&7▶ &e交易頻道'
   Lore:
     - "&r"
@@ -43,6 +46,7 @@ $:
     - "&r"
     - "&9點擊加入或離開頻道。"
 '@':
+  Material: "ACACIA_HANGING_SIGN"
   Display: '&7▶ &e設施頻道'
   Lore:
     - "&r"
@@ -55,6 +59,7 @@ $:
     - "&r"
     - "&9點擊加入或離開頻道。"
 Default:
+  Material: "OAK_HANGING_SIGN"
   Display: '&7▶ &e範圍頻道'
   Lore:
     - "&r"

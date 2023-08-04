@@ -1,8 +1,7 @@
 package net.moubiecat.chatcontrolred.menu;
 
 import net.moubiecat.chatcontrolred.MouBieCat;
-import net.moubiecat.chatcontrolred.channel.ChannelItem;
-import net.moubiecat.chatcontrolred.channel.ChannelPrefix;
+import net.moubiecat.chatcontrolred.channel.ChannelManager;
 import net.moubiecat.chatcontrolred.service.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,11 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.mineacademy.chatcontrol.model.Channel;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
 
 public final class ChannelMenu extends Menu {
     private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInstance(), "action");
@@ -45,17 +41,18 @@ public final class ChannelMenu extends Menu {
             .build()
             .orElseThrow();
 
-    private final Collection<ChannelItem> channels = new LinkedList<>();
+    private final ChannelManager manager;
 
     /**
      * 建構子
      *
-     * @param view     開啟選單的玩家
-     * @param channels 所有頻道
+     * @param view    開啟選單的玩家
+     * @param manager 頻道管理器
      */
-    private ChannelMenu(@NotNull Player view, @NotNull Collection<ChannelPrefix> channels) {
-        super(view, "        §8 ▼ 玩家頻道配置選單 ▼ ", channels.size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
-        this.channels.addAll(channels);
+    private ChannelMenu(@NotNull Player view, @NotNull ChannelManager manager) {
+        super(view, "        §8 ▼ 玩家頻道配置選單 ▼ ",
+                manager.getChannels().size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
+        this.manager = manager;
     }
 
     /**
@@ -66,7 +63,7 @@ public final class ChannelMenu extends Menu {
         // 清除所有內容
         this.clear();
         // 繪製外框
-        this.drawBorderButton();
+        this.drawBorderButtons();
         // 繪製翻頁按鈕
         this.drawPageButton();
         // 繪製頻道
@@ -76,7 +73,7 @@ public final class ChannelMenu extends Menu {
     /**
      * 繪製選單邊框
      */
-    private void drawBorderButton() {
+    private void drawBorderButtons() {
         Arrays.stream(ChannelMenu.BORDER_SLOT).forEach(slot -> this.inventory.setItem(slot, this.borderItem));
     }
 
@@ -92,40 +89,27 @@ public final class ChannelMenu extends Menu {
     }
 
     /**
-     * 繪製頻道按鈕
-     *
-     * @param channelItem 頻道物品
-     * @return 頻道按鈕
-     */
-    @NotNull
-    private ItemStack buildChannelButton(@NotNull ChannelItem channelItem) {
-        final Channel channel = Channel.findChannel(channelItem.getChannel());
-        final boolean inChannel = channel.isInChannel(this.view);
-        return inChannel ?
-                ItemService.build(Material.BELL)
-                        .name(channelItem.getDisplay() + " §2[已加入]§r")
-                        .lore(channelItem.getLore())
-                        .enchantment(Enchantment.DURABILITY, 3)
-                        .flags(ItemFlag.HIDE_ENCHANTS)
-                        .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelItem.getChannel())
-                        .build()
-                        .orElseThrow() :
-                ItemService.build(Material.BELL)
-                        .name(channelItem.getDisplay() + " §c[未加入]§r")
-                        .lore(channelItem.getLore())
-                        .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelItem.getChannel())
-                        .build()
-                        .orElseThrow();
-    }
-
-    /**
      * 繪製所有頻道按鈕
      */
     private void drawChannelButtons() {
-        this.channels.stream().skip(
-                (long) (this.page - 1) * CHANNEL_BUTTON_SLOTS).limit(CHANNEL_BUTTON_SLOTS).forEach(channelItem -> {
-            final ItemStack itemStack = this.buildChannelButton(channelItem);
-            this.inventory.addItem(itemStack);
+        this.manager.getChannels().stream().skip(
+                (long) (this.page - 1) * CHANNEL_BUTTON_SLOTS).limit(CHANNEL_BUTTON_SLOTS).forEach(channelPrefix -> {
+            if (channelPrefix.isInChannel(this.view)) this.inventory.addItem(
+                    ItemService.build(channelPrefix.getMaterial())
+                            .name(channelPrefix.getDisplay() + " §2[已加入]§r")
+                            .lore(channelPrefix.getLore())
+                            .enchantment(Enchantment.DURABILITY, 3)
+                            .flags(ItemFlag.HIDE_ENCHANTS)
+                            .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelPrefix.getPrefix())
+                            .build()
+                            .orElseThrow());
+            else this.inventory.addItem(
+                    ItemService.build(channelPrefix.getMaterial())
+                            .name(channelPrefix.getDisplay() + " §c[未加入]§r")
+                            .lore(channelPrefix.getLore())
+                            .addPersistentDataContainer(ACTION_KEY, PersistentDataType.STRING, channelPrefix.getPrefix())
+                            .build()
+                            .orElseThrow());
         });
     }
 
@@ -161,30 +145,15 @@ public final class ChannelMenu extends Menu {
                 this.previous();
                 player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
             }
-
-
             // 點擊翻頁按鈕
             case "next" -> {
                 this.next();
                 player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
             }
-
-
             // 點擊頻道按鈕
             default -> {
-                final Channel channel = Channel.findChannel(action);
-                // 判斷是否在頻道中
-                if (channel.isInChannel(player)) {
-                    // 離開頻道
-                    channel.leavePlayer(player);
-                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
-                } else {
-                    // 加入頻道
-                    channel.joinPlayer(player, Channel.Mode.READ);
-                    player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3.0F, 5.0F);
-                }
-
-                // 重新開啟選單
+                MouBieCat.getInstance().getChannelManager().getChannel(action).joinOrLeaveChannel(player);
+                player.playSound(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
                 this.open();
             }
         }
@@ -197,7 +166,6 @@ public final class ChannelMenu extends Menu {
      */
     public static void openMenu(@NotNull CommandSender sender) {
         if (sender instanceof Player player)
-            new ChannelMenu(player, MouBieCat.getInstance().getChannelManager().getChannels())
-                    .open();
+            new ChannelMenu(player, MouBieCat.getInstance().getChannelManager()).open();
     }
 }

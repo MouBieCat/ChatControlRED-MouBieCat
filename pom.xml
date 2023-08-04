@@ -21,7 +21,7 @@
     <!-- 工作群組 -->
     <groupId>net.moubiecat</groupId>
     <artifactId>ChatControlRed</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <!-- 專案配置 -->
     <properties>

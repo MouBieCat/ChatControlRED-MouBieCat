@@ -1,7 +1,6 @@
 package net.moubiecat.chatcontrolred.listener;
 
 import net.moubiecat.chatcontrolred.MouBieCat;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,14 +15,9 @@ public final class ChatListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onChatControlChatEvent(@NotNull AsyncPlayerChatEvent event) {
-        // 幹掉 ChatControlRed 原本的發送訊息功能
-        event.setCancelled(true);
-
-        // 自己處理發送訊息功能
-        final Player player = event.getPlayer();
-        final String message = event.getMessage();
-
-        // 發送訊息
-        MouBieCat.getInstance().getChannelManager().sendMessage(player, message);
+        // 判斷是否為預設頻道，如果不是我們要取消事件調用。
+        if (MouBieCat.getInstance().getChannelManager().sendMessage(event.getPlayer(), event.getMessage()))
+            // 幹掉 ChatControlRed 原本的發送訊息功能
+            event.setCancelled(true);
     }
 }

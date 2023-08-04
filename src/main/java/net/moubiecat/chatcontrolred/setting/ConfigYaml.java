@@ -1,5 +1,6 @@
 package net.moubiecat.chatcontrolred.setting;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +29,26 @@ public final class ConfigYaml extends Yaml {
         return channels != null ? channels.getKeys(false) : Set.of();
     }
 
+    /**
+     * 取得頻道名稱
+     *
+     * @param prefix 頻道前綴
+     * @return 頻道名稱
+     */
     @NotNull
     public String getChannel(@NotNull String prefix) {
         return this.getConfiguration().getString("Channels." + prefix, prefix);
+    }
+
+    /**
+     * 取得頻道物品
+     *
+     * @param prefix 頻道前綴
+     * @return 頻道物品
+     */
+    @NotNull
+    public Material getChannelMaterial(@NotNull String prefix) {
+        return Material.valueOf(this.getConfiguration().getString(prefix + ".Material", "AIR"));
     }
 
     /**
@@ -63,6 +81,16 @@ public final class ConfigYaml extends Yaml {
     @NotNull
     public String getDefaultChannel() {
         return this.getConfiguration().getString("DefaultChannel", "global");
+    }
+
+    /**
+     * 取得預設頻道物品
+     *
+     * @return 頻道物品
+     */
+    @NotNull
+    public Material getDefaultChannelMaterial() {
+        return Material.valueOf(this.getConfiguration().getString("Default.Material", "AIR"));
     }
 
     /**

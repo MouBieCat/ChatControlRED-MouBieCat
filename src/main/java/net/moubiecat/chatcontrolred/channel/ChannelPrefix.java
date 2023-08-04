@@ -1,24 +1,31 @@
 package net.moubiecat.chatcontrolred.channel;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ChannelPrefix implements Channel, ChannelItem {
-    private final String prefix;
-    private final String channel;
+public class ChannelPrefix implements Channel {
+    protected final String prefix;
+    protected final String channel;
+
+    private final Material material;
     private final String display;
     private final List<String> lore;
 
     /**
-     * @param prefix  前缀
-     * @param channel 频道
+     * @param prefix   前缀
+     * @param channel  频道
+     * @param material 材質
+     * @param display  顯示
+     * @param lore     說明
      */
-    public ChannelPrefix(@NotNull String prefix, @NotNull String channel, @NotNull String display, @NotNull List<String> lore) {
+    public ChannelPrefix(@NotNull String prefix, @NotNull String channel, @NotNull Material material, @NotNull String display, @NotNull List<String> lore) {
         this.prefix = prefix;
         this.channel = channel;
+        this.material = material;
         this.display = display;
         this.lore = lore;
     }
@@ -52,7 +59,7 @@ public class ChannelPrefix implements Channel, ChannelItem {
      * @param sender  發送者
      * @param message 訊息
      */
-    public final boolean sendMessageToChannel(@NotNull Player sender, @Nullable String message) {
+    public boolean sendMessageToChannel(@NotNull Player sender, @Nullable String message) {
         if (message == null)
             return false;
 
@@ -101,12 +108,66 @@ public class ChannelPrefix implements Channel, ChannelItem {
     }
 
     /**
+     * 加入頻道
+     *
+     * @param player 玩家
+     */
+    public void joinChannel(@NotNull Player player) {
+        final org.mineacademy.chatcontrol.model.Channel channel = org.mineacademy.chatcontrol.model.Channel.findChannel(this.channel);
+        channel.joinPlayer(player, org.mineacademy.chatcontrol.model.Channel.Mode.READ);
+    }
+
+    /**
+     * 離開頻道
+     *
+     * @param player 玩家
+     */
+    public void leaveChannel(@NotNull Player player) {
+        final org.mineacademy.chatcontrol.model.Channel channel = org.mineacademy.chatcontrol.model.Channel.findChannel(this.channel);
+        channel.leavePlayer(player);
+    }
+
+    /**
+     * 加入或離開頻道
+     *
+     * @param player 玩家
+     */
+    @Override
+    public final void joinOrLeaveChannel(@NotNull Player player) {
+        final org.mineacademy.chatcontrol.model.Channel channel = org.mineacademy.chatcontrol.model.Channel.findChannel(this.channel);
+        if (channel.isInChannel(player))
+            this.leaveChannel(player);
+
+        else
+            this.joinChannel(player);
+    }
+
+    /**
+     * 玩家是否在頻道中
+     *
+     * @param player 玩家
+     * @return 是否在頻道
+     */
+    @Override
+    public boolean isInChannel(@NotNull Player player) {
+        final org.mineacademy.chatcontrol.model.Channel channel = org.mineacademy.chatcontrol.model.Channel.findChannel(this.channel);
+        return channel.isInChannel(player);
+    }
+
+    @NotNull
+    @Override
+    public final Material getMaterial() {
+        return this.material;
+    }
+
+    /**
      * 獲取頻道顯示名稱
      *
      * @return 名稱
      */
     @Override
-    public final @NotNull String getDisplay() {
+    @NotNull
+    public final String getDisplay() {
         return this.display;
     }
 
@@ -116,7 +177,8 @@ public class ChannelPrefix implements Channel, ChannelItem {
      * @return 描述
      */
     @Override
-    public final @NotNull List<String> getLore() {
+    @NotNull
+    public final List<String> getLore() {
         return this.lore;
     }
 }
