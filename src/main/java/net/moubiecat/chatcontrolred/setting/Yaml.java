@@ -20,7 +20,9 @@ public class Yaml {
     public Yaml(@NotNull Plugin plugin, @NotNull String fileName) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), fileName);
-        this.plugin.saveResource(fileName, false);
+        // 如果檔案不存在，則複製檔案
+        if (!this.file.exists())
+            this.plugin.saveResource(fileName, false);
         this.configuration = YamlConfiguration.loadConfiguration(file);
     }
 
