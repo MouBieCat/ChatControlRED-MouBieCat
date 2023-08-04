@@ -14,4 +14,8 @@ main: net.moubiecat.chatcontrol.MouBieCat
 commands:
   MBChatControl:
     description: "主要的插件指令。"
-    usage: /MBChatControl [reload]
+
+permissions:
+  MBChatControl.reload:
+    description: "重載插件設定。"
+    default: op

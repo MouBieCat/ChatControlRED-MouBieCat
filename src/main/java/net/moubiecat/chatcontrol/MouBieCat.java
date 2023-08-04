@@ -60,7 +60,7 @@ public final class MouBieCat extends JavaPlugin implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.hasPermission("MBChatControl.reload")) {
             // 如果輸入參數為 reload，則重載插件
             MouBieCat.getInstance().onReload();
             sender.sendMessage("§6The plugin ChatControl-MouBieCat has been reloaded.");
