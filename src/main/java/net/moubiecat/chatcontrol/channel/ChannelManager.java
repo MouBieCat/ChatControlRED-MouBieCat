@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 public final class ChannelManager {
     private final List<IChannel> channels = new LinkedList<>();
@@ -40,11 +41,11 @@ public final class ChannelManager {
      * @param name 頻道名稱
      * @return 頻道
      */
-    public @Nullable IChannel getChannel(@NotNull String name) {
+    public @NotNull Optional<IChannel> getChannel(@NotNull String name) {
         for (final IChannel channel : this.channels)
             if (channel.getChannelName().equalsIgnoreCase(name))
-                return channel;
-        return null;
+                return Optional.of(channel);
+        return Optional.empty();
     }
 
     /**

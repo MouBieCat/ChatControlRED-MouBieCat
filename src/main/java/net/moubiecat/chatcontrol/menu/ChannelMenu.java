@@ -94,10 +94,7 @@ public final class ChannelMenu extends Menu {
         switch (action) {
             case "previous" -> this.previous();
             case "next" -> this.next();
-            default -> this.manager.getChannels().stream()
-                    .filter(channel -> channel.getChannelName().equals(action))
-                    .findFirst()
-                    .ifPresent(channel -> channel.toggle(this.view));
+            default -> this.manager.getChannel(action).ifPresent(channel -> channel.toggle(this.view));
         }
         this.refresh();
     }
