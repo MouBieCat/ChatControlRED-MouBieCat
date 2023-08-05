@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrol;
+package net.moubiecat.chatcontrol.injector;
 
 import net.moubiecat.chatcontrol.utils.Yaml;
 import org.bukkit.plugin.Plugin;

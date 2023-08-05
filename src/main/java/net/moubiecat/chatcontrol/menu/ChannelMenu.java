@@ -1,7 +1,7 @@
 package net.moubiecat.chatcontrol.menu;
 
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.channel.ChannelManager;
+import net.moubiecat.chatcontrol.injector.ChannelManager;
 import net.moubiecat.chatcontrol.service.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -20,7 +20,7 @@ public final class ChannelMenu extends Menu {
     private final static int NEXT_PAGE_SLOT = 17;
     private final static int CHANNEL_BUTTON_SLOTS = 7;
 
-    private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInstance(), "action");
+    private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInjector().getInstance(MouBieCat.class), "action");
     private final ItemStack borderItem = ItemService.build(Material.BLACK_STAINED_GLASS_PANE)
             .name(" ")
             .build()
@@ -105,6 +105,7 @@ public final class ChannelMenu extends Menu {
      * @param player 開啟選單的玩家
      */
     public static void open(@NotNull Player player) {
-        new ChannelMenu(player, MouBieCat.getInstance().getChannelManager()).open();
+        final ChannelMenu channelMenu = new ChannelMenu(player, MouBieCat.getInjector().getInstance(ChannelManager.class));
+        channelMenu.open();
     }
 }

@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrol;
+package net.moubiecat.chatcontrol.injector;
 
 import net.moubiecat.chatcontrol.utils.Yaml;
 import org.bukkit.entity.Player;
@@ -47,12 +47,6 @@ public final class MessageYaml extends Yaml {
         return this.configuration.getString(message.getPath(), message.getDef());
     }
 
-    /**
-     * 從配置檔發送訊息
-     *
-     * @param player  玩家
-     * @param message 訊息
-     */
     public void sendFormatMessage(@NotNull Player player, @NotNull MessageYaml.Message message, @NotNull Object... args) {
         final MessageFormat format = new MessageFormat(this.getMessage(message));
         player.sendMessage(format.format(args));

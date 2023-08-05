@@ -8,19 +8,22 @@ public interface Configurable<T extends Yaml> {
      *
      * @param config config
      */
-    void onLoad(@NotNull T config);
+    default void onLoad(@NotNull T config) {
+    }
 
     /**
      * Save config
      *
      * @param config config
      */
-    void onSave(@NotNull T config);
+    default void onSave(@NotNull T config) {
+    }
 
     /**
      * Reload config
      *
      * @param config config
      */
-    void onReload(@NotNull T config);
+    default void onReload(@NotNull T config) {
+    }
 }

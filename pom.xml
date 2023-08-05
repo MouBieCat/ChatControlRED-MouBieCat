@@ -21,7 +21,7 @@
     <!-- 工作群組 -->
     <groupId>net.moubiecat</groupId>
     <artifactId>ChatControlRed</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <!-- 專案配置 -->
     <properties>
@@ -45,6 +45,11 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <!-- Guice -->
+        <repository>
+            <id>guice-repo</id>
+            <url>https://repo1.maven.org/maven2/com/google/inject/guice/</url>
+        </repository>
     </repositories>
 
     <!-- 依賴項目管理 -->
@@ -64,6 +69,13 @@
                 <artifactId>annotations</artifactId>
                 <version>23.0.0</version>
                 <scope>provided</scope>
+            </dependency>
+            <!-- Guice -->
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>7.0.0</version>
+                <scope>compile</scope>
             </dependency>
             <!-- Spigot API -->
             <dependency>
@@ -100,6 +112,11 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
         </dependency>
+        <!-- Guice -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -132,11 +149,6 @@
         <!-- 插件管理 -->
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                </plugin>
                 <!-- maven-shade-plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -147,15 +159,18 @@
         </pluginManagement>
 
         <plugins>
-            <!-- maven-compiler-plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
             <!-- maven-shade-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

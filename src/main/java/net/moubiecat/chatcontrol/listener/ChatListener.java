@@ -1,6 +1,7 @@
 package net.moubiecat.chatcontrol.listener;
 
-import net.moubiecat.chatcontrol.channel.ChannelManager;
+import com.google.inject.Inject;
+import net.moubiecat.chatcontrol.injector.ChannelManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -8,16 +9,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class ChatListener implements Listener {
-    private final ChannelManager manager;
-
-    /**
-     * 构造函数
-     *
-     * @param manager 頻道管理器實例
-     */
-    public ChatListener(@NotNull ChannelManager manager) {
-        this.manager = manager;
-    }
+    @Inject
+    private ChannelManager manager;
 
     /**
      * 玩家聊天事件

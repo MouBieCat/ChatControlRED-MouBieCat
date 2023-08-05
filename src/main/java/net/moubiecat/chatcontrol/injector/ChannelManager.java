@@ -1,7 +1,10 @@
-package net.moubiecat.chatcontrol.channel;
+package net.moubiecat.chatcontrol.injector;
 
-import net.moubiecat.chatcontrol.ChannelYaml;
+import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
+import net.moubiecat.chatcontrol.channel.IChannel;
+import net.moubiecat.chatcontrol.channel.MBChannel;
+import net.moubiecat.chatcontrol.channel.MBDefaultChannel;
 import net.moubiecat.chatcontrol.utils.Configurable;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +18,6 @@ import java.util.Optional;
 
 public final class ChannelManager {
     private final List<IChannel> channels = new LinkedList<>();
-    private final ChannelLoader loader = new ChannelLoader(this);
 
     /**
      * 添加頻道
@@ -72,32 +74,17 @@ public final class ChannelManager {
     }
 
     /**
-     * 列印頻道
-     */
-    public void printChannels() {
-        this.channels.forEach(channel -> MouBieCat.getInstance().getLogger().info(channel.getChannelName() + ": " + channel.getPrefix()));
-    }
-
-    /**
      * 取得頻道載入器
      *
      * @return 頻道載入器
      */
-    public @NotNull ChannelLoader getLoader() {
-        return this.loader;
+    public @NotNull ChannelConfiguration getParser() {
+        return MouBieCat.getInjector().getInstance(ChannelConfiguration.class);
     }
 
-    public final static class ChannelLoader implements Configurable<ChannelYaml> {
-        private final ChannelManager manager;
-
-        /**
-         * 建構子
-         *
-         * @param manager 頻道管理器
-         */
-        public ChannelLoader(@NotNull ChannelManager manager) {
-            this.manager = manager;
-        }
+    public final static class ChannelConfiguration implements Configurable<ChannelYaml> {
+        @Inject
+        private ChannelManager manager;
 
         /**
          * Load config
@@ -107,17 +94,6 @@ public final class ChannelManager {
         @Override
         public void onLoad(@NotNull ChannelYaml config) {
             this.getChannel(config).forEach(manager::addChannel);
-            manager.printChannels();
-        }
-
-        /**
-         * Save config
-         *
-         * @param config config
-         */
-        @Override
-        public void onSave(@NotNull ChannelYaml config) {
-            // 沒有事情要做
         }
 
         /**
@@ -129,7 +105,6 @@ public final class ChannelManager {
         public void onReload(@NotNull ChannelYaml config) {
             manager.channels.clear();
             this.getChannel(config).forEach(manager::addChannel);
-            manager.printChannels();
         }
 
         /**
