@@ -1,3 +1,2 @@
-# Config.yml 的配置都需要重啟伺服器才會生效
 Commands:
   - "/channel"

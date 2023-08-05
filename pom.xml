@@ -21,7 +21,7 @@
     <!-- 工作群組 -->
     <groupId>net.moubiecat</groupId>
     <artifactId>ChatControlRed</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <!-- 專案配置 -->
     <properties>
@@ -139,6 +139,16 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>plugin.yml</include>
+                    <include>config.yml</include>
+                    <include>channels.yml</include>
+                    <include>message.yml</include>
+                </includes>
+            </resource>
+            <!-- 資源 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
                     <include>config.yml</include>
                     <include>channels.yml</include>
                     <include>message.yml</include>

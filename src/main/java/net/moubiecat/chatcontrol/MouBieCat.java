@@ -1,13 +1,14 @@
 package net.moubiecat.chatcontrol;
 
 import com.google.inject.Injector;
+import net.moubiecat.chatcontrol.database.FirstChatDatabase;
 import net.moubiecat.chatcontrol.injector.ChannelManager;
 import net.moubiecat.chatcontrol.injector.ChannelYaml;
 import net.moubiecat.chatcontrol.injector.ConfigYaml;
 import net.moubiecat.chatcontrol.injector.MessageYaml;
-import net.moubiecat.chatcontrol.listener.ChatListener;
 import net.moubiecat.chatcontrol.listener.CommandListener;
 import net.moubiecat.chatcontrol.listener.InventoryListener;
+import net.moubiecat.chatcontrol.listener.PlayerListener;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -28,19 +29,22 @@ public final class MouBieCat extends JavaPlugin {
         registration.register(ChannelYaml.class, new ChannelYaml(this));
         registration.register(MessageYaml.class, new MessageYaml(this));
         registration.register(ChannelManager.class, new ChannelManager());
+        registration.register(FirstChatDatabase.class, new FirstChatDatabase());
         // 生成注入器
         injector = registration.createInjector();
     }
 
     @Override
     public void onEnable() {
+        // 連接資料庫
+        injector.getInstance(FirstChatDatabase.class).connect();
         // 加載頻道配置檔
         injector.getInstance(ChannelManager.class)
                 .getParser()
                 .onLoad(injector.getInstance(ChannelYaml.class));
         // 註冊事件
         Bukkit.getPluginManager().registerEvents(injector.getInstance(InventoryListener.class), this);
-        Bukkit.getPluginManager().registerEvents(injector.getInstance(ChatListener.class), this);
+        Bukkit.getPluginManager().registerEvents(injector.getInstance(PlayerListener.class), this);
         Bukkit.getPluginManager().registerEvents(injector.getInstance(CommandListener.class), this);
     }
 
