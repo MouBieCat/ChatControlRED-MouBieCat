@@ -3,7 +3,7 @@ package net.moubiecat.chatcontrol.channel;
 import jdk.jfr.Description;
 import net.moubiecat.chatcontrol.MouBieCat;
 import net.moubiecat.chatcontrol.injector.MessageYaml;
-import net.moubiecat.chatcontrol.service.ItemService;
+import net.moubiecat.chatcontrol.services.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -118,15 +118,11 @@ public class MBChannel implements IChannel {
     public final void toggle(@NotNull Player player) {
         if (this.isInChannel(player) && this.leaveChannel(player)) {
             // 如果玩家在頻道內且離開頻道成功，則發送離開頻道訊息
-            MouBieCat.getInjector()
-                    .getInstance(MessageYaml.class)
-                    .sendFormatMessage(player, MessageYaml.Message.YOU_LEAVE_CHANNEL, this.channelName);
+            MouBieCat.getInstance(MessageYaml.class).sendFormatMessage(player, MessageYaml.Message.YOU_LEAVE_CHANNEL, this.channelName);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5, 5);
         } else if (this.joinChannel(player)) {
             // 如果玩家不在頻道內且加入頻道成功，則發送加入頻道訊息
-            MouBieCat.getInjector()
-                    .getInstance(MessageYaml.class)
-                    .sendFormatMessage(player, MessageYaml.Message.YOU_JOIN_CHANNEL, this.channelName);
+            MouBieCat.getInstance(MessageYaml.class).sendFormatMessage(player, MessageYaml.Message.YOU_JOIN_CHANNEL, this.channelName);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         }
     }
@@ -165,9 +161,7 @@ public class MBChannel implements IChannel {
                 this.channel.sendMessage(player, finalMessage, true);
             else
                 // 如果玩家不在頻道內，則發送訊息給玩家
-                MouBieCat.getInjector()
-                        .getInstance(MessageYaml.class)
-                        .sendFormatMessage(player, MessageYaml.Message.YOU_NOT_IN_CHANNEL, this.channelName);
+                MouBieCat.getInstance(MessageYaml.class).sendFormatMessage(player, MessageYaml.Message.YOU_NOT_IN_CHANNEL, this.channelName);
             return true;
         } catch (final IndexOutOfBoundsException | EventHandledException ignored) {
             return false;

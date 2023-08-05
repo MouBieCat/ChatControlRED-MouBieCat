@@ -79,7 +79,7 @@ public final class ChannelManager {
      * @return 頻道載入器
      */
     public @NotNull ChannelConfiguration getParser() {
-        return MouBieCat.getInjector().getInstance(ChannelConfiguration.class);
+        return MouBieCat.getInstance(ChannelConfiguration.class);
     }
 
     public final static class ChannelConfiguration implements Configurable<ChannelYaml> {

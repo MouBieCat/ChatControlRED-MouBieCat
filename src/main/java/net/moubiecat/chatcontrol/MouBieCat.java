@@ -1,81 +1,87 @@
 package net.moubiecat.chatcontrol;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
-import jdk.jfr.Description;
-import net.moubiecat.chatcontrol.injector.ChannelManager;
-import net.moubiecat.chatcontrol.injector.ChannelYaml;
-import net.moubiecat.chatcontrol.injector.ConfigYaml;
-import net.moubiecat.chatcontrol.injector.MessageYaml;
+import net.moubiecat.chatcontrol.injector.*;
 import net.moubiecat.chatcontrol.listener.ChatListener;
 import net.moubiecat.chatcontrol.listener.CommandListener;
 import net.moubiecat.chatcontrol.listener.InventoryListener;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class MouBieCat extends JavaPlugin implements CommandExecutor {
-    @Description("Guice 注入器")
+public final class MouBieCat extends JavaPlugin {
+    private static final InjectRegistration registration = new InjectRegistration();
     private static Injector injector = null;
 
-    private final ChannelManager channelManager = new ChannelManager();
-    private final ConfigYaml configYaml = new ConfigYaml(MouBieCat.this);
-    private final ChannelYaml channelYaml = new ChannelYaml(MouBieCat.this);
-    private final MessageYaml messageYaml = new MessageYaml(MouBieCat.this);
-
-    public MouBieCat() {
-        // 註冊 Guice 注入器
-        injector = Guice.createInjector(binder -> {
-            // 註冊插件實例
-            binder.bind(MouBieCat.class).toInstance(this);
-            // 註冊配置檔
-            binder.bind(ConfigYaml.class).toInstance(MouBieCat.this.configYaml);
-            binder.bind(ChannelYaml.class).toInstance(MouBieCat.this.channelYaml);
-            binder.bind(MessageYaml.class).toInstance(MouBieCat.this.messageYaml);
-            // 註冊頻道管理器
-            binder.bind(ChannelManager.class).toInstance(MouBieCat.this.channelManager);
-        });
+    @Override
+    public void onLoad() {
+        // 註冊一些東西
+        registration.register(MouBieCat.class, this);
+        registration.register(ConfigYaml.class, new ConfigYaml(this));
+        registration.register(ChannelYaml.class, new ChannelYaml(this));
+        registration.register(MessageYaml.class, new MessageYaml(this));
+        registration.register(ChannelManager.class, new ChannelManager());
+        // 生成注入器
+        injector = registration.createInjector();
     }
 
     @Override
     public void onEnable() {
-        // 處理頻道配置檔載入
-        this.channelManager.getParser().onLoad(this.channelYaml);
+        // 加載頻道配置檔
+        injector.getInstance(ChannelManager.class)
+                .getParser()
+                .onLoad(injector.getInstance(ChannelYaml.class));
         // 註冊事件
         Bukkit.getPluginManager().registerEvents(injector.getInstance(InventoryListener.class), this);
         Bukkit.getPluginManager().registerEvents(injector.getInstance(ChatListener.class), this);
         Bukkit.getPluginManager().registerEvents(injector.getInstance(CommandListener.class), this);
-        // 註冊指令
-        final PluginCommand command = this.getCommand("MBChatControl");
-        if (command != null) command.setExecutor(this);
     }
 
     @Override
     public void onDisable() {
-        // 處理頻道儲存
-        channelManager.getParser().onSave(this.channelYaml);
+        // 保存頻道配置檔
+        injector.getInstance(ChannelManager.class)
+                .getParser()
+                .onSave(injector.getInstance(ChannelYaml.class));
     }
 
     public void onReload() {
-        // 處理配置檔重載
-        configYaml.load();
-        channelYaml.load();
-        messageYaml.load();
-        // 處理頻道重載
-        channelManager.getParser().onReload(this.channelYaml);
+        // 重載頻道配置檔
+        injector.getInstance(ChannelManager.class)
+                .getParser()
+                .onReload(injector.getInstance(ChannelYaml.class));
     }
 
+    /**
+     * 從注入器取得實例
+     *
+     * @param clazz 類
+     * @param <T>   類型
+     * @return 實例
+     */
+    @NotNull
+    public static <T> T getInstance(@NotNull Class<T> clazz) {
+        return injector.getInstance(clazz);
+    }
+
+    /**
+     * 指令
+     *
+     * @param sender  來源
+     * @param command 指令
+     * @param label   標籤
+     * @param args    參數
+     * @return 是否成功
+     */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         // 如果是玩家且沒有輸入參數，則開啟頻道選單
         if (sender instanceof Player player && args.length == 0) {
-            ChannelMenu.open(player);
+            MouBieCat.getInstance(ChannelMenu.class).open(player);
             return true;
         }
 
@@ -85,17 +91,6 @@ public final class MouBieCat extends JavaPlugin implements CommandExecutor {
             sender.sendMessage("§6The plugin ChatControl-MouBieCat has been reloaded.");
             return true;
         }
-
         return false;
-    }
-
-    /**
-     * 取得 Guice 注入器
-     *
-     * @return Guice 注入器
-     */
-    @NotNull
-    public static Injector getInjector() {
-        return MouBieCat.injector;
     }
 }

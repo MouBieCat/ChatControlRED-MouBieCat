@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrol.service;
+package net.moubiecat.chatcontrol.services;
 
 import com.google.common.collect.Multimap;
 import org.bukkit.ChatColor;
@@ -18,10 +18,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class ItemService {
+    /**
+     * 建構物品
+     *
+     * @param material 物品材質
+     * @return 物品建構器
+     */
     public static @NotNull ItemFactory build(@NotNull Material material) {
         return new ItemFactory(material);
     }
 
+    /**
+     * 編輯
+     *
+     * @param itemStack 物品堆疊
+     * @return 物品建構器
+     */
     public static @NotNull ItemFactory edit(@NotNull ItemStack itemStack) {
         return new ItemFactory(itemStack);
     }
@@ -171,7 +183,7 @@ public final class ItemService {
         }
 
         @NotNull
-        public <T, Z>ItemFactory addPersistentDataContainer(@NotNull NamespacedKey var1, @NotNull PersistentDataType<T, Z> var2, @NotNull Z var3) {
+        public <T, Z> ItemFactory addPersistentDataContainer(@NotNull NamespacedKey var1, @NotNull PersistentDataType<T, Z> var2, @NotNull Z var3) {
             final ItemMeta itemMeta = this.builder.getItemMeta();
             if (itemMeta != null) {
                 itemMeta.getPersistentDataContainer().set(var1, var2, var3);

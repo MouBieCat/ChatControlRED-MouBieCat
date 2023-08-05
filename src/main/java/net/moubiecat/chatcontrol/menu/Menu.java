@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class Menu implements InventoryHolder, MenuHandler {
     protected final Inventory inventory;
-    protected final Player view;
     protected final MenuSize size;
 
     protected final int max;
@@ -21,61 +20,73 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
     /**
      * 建構子
      *
-     * @param view  開啟選單的玩家
      * @param title 選單標題
      * @param max   最大頁數
      * @param size  選單大小
      */
-    public Menu(@NotNull Player view, @NotNull String title, int max, MenuSize size) {
-        this.view = view;
+    public Menu(@NotNull String title, int max, MenuSize size) {
         this.max = max;
         this.size = size;
         this.inventory = Bukkit.createInventory(this, this.size.getSize(), title);
     }
 
     /**
-     * 開啟選單
+     * 檢查頁數是否合理
+     * 若不合理則將頁數設置為最大或最小值
      */
-    public final void open() {
+    private void checkPage() {
+        // 檢查頁數是否合理
         if (this.page > this.max)
             this.page = this.max;
-
         else if (this.page < 1)
             this.page = 1;
+    }
 
-        this.initialize(this.page);
-        this.view.openInventory(this.inventory);
+    /**
+     * 開啟選單
+     *
+     * @param viewer 開啟選單的玩家
+     */
+    public final void open(@NotNull Player viewer) {
+        this.checkPage();
+        viewer.openInventory(this.inventory);
+        this.initialize(viewer, this.page);
     }
 
     /**
      * 重新整理選單
+     *
+     * @param viewer 開啟選單的玩家
      */
-    public final void refresh() {
-        if (this.page > this.max)
-            this.page = this.max;
-
-        else if (this.page < 1)
-            this.page = 1;
-
-        this.initialize(this.page);
+    public final void refresh(@NotNull Player viewer) {
+        this.checkPage();
+        this.initialize(viewer, this.page);
     }
 
     /**
      * 下一頁
+     *
+     * @param viewer 開啟選單的玩家
      */
-    public void next() {
+    public final void next(@NotNull Player viewer) {
         this.page++;
-        this.refresh();
-        this.view.playSound(this.view, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
+        this.refresh(viewer);
+        this.inventory.getViewers().stream()
+                .filter(humanEntity -> humanEntity instanceof Player)
+                .forEach(humanEntity -> ((Player) humanEntity).playSound(humanEntity, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5.0f, 5.0f));
     }
 
     /**
      * 上一頁
+     *
+     * @param viewer 開啟選單的玩家
      */
-    public void previous() {
+    public final void previous(@NotNull Player viewer) {
         this.page--;
-        this.refresh();
-        this.view.playSound(this.view, Sound.ITEM_BOOK_PAGE_TURN, 1.0F, 1.0F);
+        this.refresh(viewer);
+        this.inventory.getViewers().stream()
+                .filter(humanEntity -> humanEntity instanceof Player)
+                .forEach(humanEntity -> ((Player) humanEntity).playSound(humanEntity, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f));
     }
 
     /**
@@ -83,7 +94,7 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      *
      * @param page 頁數
      */
-    protected abstract void initialize(int page);
+    protected abstract void initialize(@NotNull Player view, int page);
 
     /**
      * 取得選單實例

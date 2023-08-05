@@ -1,8 +1,9 @@
 package net.moubiecat.chatcontrol.menu;
 
+import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
 import net.moubiecat.chatcontrol.injector.ChannelManager;
-import net.moubiecat.chatcontrol.service.ItemService;
+import net.moubiecat.chatcontrol.services.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -20,7 +21,8 @@ public final class ChannelMenu extends Menu {
     private final static int NEXT_PAGE_SLOT = 17;
     private final static int CHANNEL_BUTTON_SLOTS = 7;
 
-    private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInjector().getInstance(MouBieCat.class), "action");
+    private final static NamespacedKey ACTION_KEY = new NamespacedKey(MouBieCat.getInstance(MouBieCat.class), "action");
+
     private final ItemStack borderItem = ItemService.build(Material.BLACK_STAINED_GLASS_PANE)
             .name(" ")
             .build()
@@ -41,10 +43,11 @@ public final class ChannelMenu extends Menu {
     /**
      * 建構子
      *
-     * @param view 開啟選單的玩家
+     * @param manager 頻道管理器
      */
-    ChannelMenu(@NotNull Player view, @NotNull ChannelManager manager) {
-        super(view, "        §8 ▼ 玩家頻道配置選單 ▼ ", manager.getChannels().size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
+    @Inject
+    public ChannelMenu(@NotNull ChannelManager manager) {
+        super("        §8 ▼ 玩家頻道配置選單 ▼ ", manager.getChannels().size() / CHANNEL_BUTTON_SLOTS + 1, MenuSize.THREE);
         this.manager = manager;
     }
 
@@ -54,7 +57,7 @@ public final class ChannelMenu extends Menu {
      * @param page 頁數
      */
     @Override
-    protected void initialize(int page) {
+    protected void initialize(@NotNull Player view, int page) {
         this.inventory.clear();
         // 設置選單邊框
         Arrays.stream(ChannelMenu.BORDER_SLOT).forEach(slot -> this.inventory.setItem(slot, this.borderItem));
@@ -67,7 +70,7 @@ public final class ChannelMenu extends Menu {
         this.manager.getChannels().stream()
                 .skip((long) (page - 1) * CHANNEL_BUTTON_SLOTS)
                 .limit(CHANNEL_BUTTON_SLOTS)
-                .forEach(channel -> this.inventory.addItem(channel.buildChannelItem(this.view, ACTION_KEY)));
+                .forEach(channel -> this.inventory.addItem(channel.buildChannelItem(view, ACTION_KEY)));
     }
 
     /**
@@ -81,6 +84,7 @@ public final class ChannelMenu extends Menu {
         event.setCancelled(true);
 
         // 獲取點擊的物品
+        final Player player = (Player) event.getWhoClicked();
         final ItemStack currentItem = event.getCurrentItem();
         if (currentItem == null || currentItem.getItemMeta() == null)
             return;
@@ -92,20 +96,12 @@ public final class ChannelMenu extends Menu {
 
         // 根據 Action 執行對應的動作
         switch (action) {
-            case "previous" -> this.previous();
-            case "next" -> this.next();
-            default -> this.manager.getChannel(action).ifPresent(channel -> channel.toggle(this.view));
+            case "previous" -> this.previous(player);
+            case "next" -> this.next(player);
+            default -> this.manager.getChannel(action).ifPresent(channel -> channel.toggle(player));
         }
-        this.refresh();
-    }
 
-    /**
-     * 開啟選單
-     *
-     * @param player 開啟選單的玩家
-     */
-    public static void open(@NotNull Player player) {
-        final ChannelMenu channelMenu = new ChannelMenu(player, MouBieCat.getInjector().getInstance(ChannelManager.class));
-        channelMenu.open();
+        // 更新選單
+        this.refresh(player);
     }
 }

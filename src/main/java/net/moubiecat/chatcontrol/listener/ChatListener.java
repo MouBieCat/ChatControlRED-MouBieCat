@@ -9,8 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class ChatListener implements Listener {
-    @Inject
-    private ChannelManager manager;
+    private @Inject ChannelManager manager;
 
     /**
      * 玩家聊天事件
