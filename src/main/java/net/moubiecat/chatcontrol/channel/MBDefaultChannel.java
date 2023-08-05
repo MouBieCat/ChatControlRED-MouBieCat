@@ -18,7 +18,7 @@ public final class MBDefaultChannel extends MBChannel {
      * @param lore        頻道描述
      */
     public MBDefaultChannel(@NotNull String channelName, @NotNull Material material, @NotNull String displayName, @NotNull List<String> lore) {
-        super("", channelName, material, displayName, lore);
+        super("", channelName, null, material, displayName, lore);
     }
 
     /**
@@ -32,6 +32,12 @@ public final class MBDefaultChannel extends MBChannel {
         if (!this.isInChannel(player))
             return this.channel.joinPlayer(player, Channel.Mode.WRITE);
         return false;
+    }
+
+    @Override
+    public boolean hasPermission(@NotNull Player player) {
+        // 預設頻道不需要權限
+        return true;
     }
 
     @Override

@@ -1,3 +1,4 @@
 YouNotInChannel: "§c系統 §7㇣ §f你沒有加入 §e{0} §f因此無法發送訊息。"
 YouJoinChannel: "§c系統 §7㇣ §f你已經將 §e{0} §f開啟。"
 YouLeaveChannel: "§c系統 §7㇣ §f你已經將 §e{0} §f靜音。"
+YouNotPermission: "§c系統 §7㇣ §f你沒有權限使用 §e{0} §f頻道。"

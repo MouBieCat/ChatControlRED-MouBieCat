@@ -3,6 +3,7 @@ package net.moubiecat.chatcontrol.channel;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +22,21 @@ public interface IChannel {
      * @return 頻道名稱
      */
     @NotNull String getChannelName();
+
+    /**
+     * 取得頻道權限
+     *
+     * @return 頻道權限
+     */
+    @Nullable Permission getPermission();
+
+    /**
+     * 判斷玩家是否有權限
+     *
+     * @param player 玩家
+     * @return 是否有權限
+     */
+    boolean hasPermission(@NotNull Player player);
 
     /**
      * 取得頻道物品

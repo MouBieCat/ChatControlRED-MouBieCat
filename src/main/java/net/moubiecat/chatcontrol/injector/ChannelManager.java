@@ -118,6 +118,7 @@ public final class ChannelManager {
             for (final String name : config.getChannelNames()) {
                 final String channelPrefix = config.getChannelPrefix(name);
                 final String channelName = config.getChannelName(name);
+                final String channelPermission = config.getChannelPermission(name);
                 final Material channelIcon = config.getChannelIcon(name);
                 final String channelDisplay = config.getChannelDisplay(name);
                 final List<String> channelLore = config.getChannelLore(name);
@@ -128,7 +129,7 @@ public final class ChannelManager {
                     continue;
                 }
                 // 否則使用 MBChannel
-                channels.add(new MBChannel(channelPrefix, channelName, channelIcon, channelDisplay, channelLore));
+                channels.add(new MBChannel(channelPrefix, channelName, channelPermission, channelIcon, channelDisplay, channelLore));
             }
 
             return channels;

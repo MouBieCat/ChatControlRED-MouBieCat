@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,10 @@ public final class ChannelYaml extends Yaml {
 
     public @NotNull String getChannelName(@NotNull String name) {
         return this.configuration.getString("List." + name + ".ChannelName", name);
+    }
+
+    public @Nullable String getChannelPermission(@NotNull String name) {
+        return this.configuration.getString("List." + name + ".ChannelPermission");
     }
 
     public @NotNull Material getChannelIcon(@NotNull String name) {

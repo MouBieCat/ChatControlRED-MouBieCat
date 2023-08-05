@@ -1,7 +1,10 @@
 package net.moubiecat.chatcontrol;
 
 import com.google.inject.Injector;
-import net.moubiecat.chatcontrol.injector.*;
+import net.moubiecat.chatcontrol.injector.ChannelManager;
+import net.moubiecat.chatcontrol.injector.ChannelYaml;
+import net.moubiecat.chatcontrol.injector.ConfigYaml;
+import net.moubiecat.chatcontrol.injector.MessageYaml;
 import net.moubiecat.chatcontrol.listener.ChatListener;
 import net.moubiecat.chatcontrol.listener.CommandListener;
 import net.moubiecat.chatcontrol.listener.InventoryListener;
@@ -47,9 +50,17 @@ public final class MouBieCat extends JavaPlugin {
         injector.getInstance(ChannelManager.class)
                 .getParser()
                 .onSave(injector.getInstance(ChannelYaml.class));
+        // 保存配置檔
+        injector.getInstance(ConfigYaml.class).save();
+        injector.getInstance(ChannelYaml.class).save();
+        injector.getInstance(MessageYaml.class).save();
     }
 
     public void onReload() {
+        // 重載配置檔
+        injector.getInstance(ConfigYaml.class).load();
+        injector.getInstance(ChannelYaml.class).load();
+        injector.getInstance(MessageYaml.class).load();
         // 重載頻道配置檔
         injector.getInstance(ChannelManager.class)
                 .getParser()

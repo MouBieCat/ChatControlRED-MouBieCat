@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permission;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,7 @@ import java.util.List;
 public class MBChannel implements IChannel {
     private final String prefix;
     private final String channelName;
+    private final String permission;
 
     private final Material material;
     private final String displayName;
@@ -35,15 +37,17 @@ public class MBChannel implements IChannel {
      *
      * @param prefix      頻道前綴
      * @param channelName 頻道名稱
+     * @param permission  頻道權限
      * @param material    頻道物品
      * @param displayName 頻道顯示名稱
      * @param lore        頻道描述
      */
-    public MBChannel(@NotNull String prefix, @NotNull String channelName,
+    public MBChannel(@NotNull String prefix, @NotNull String channelName, @Nullable String permission,
                      @NotNull Material material, @NotNull String displayName, @NotNull List<String> lore) {
         // 初始化內部物件
         this.prefix = prefix;
         this.channelName = channelName;
+        this.permission = permission;
         this.material = material;
         this.displayName = displayName;
         this.lore = lore;
@@ -69,6 +73,28 @@ public class MBChannel implements IChannel {
      */
     public final @NotNull String getChannelName() {
         return this.channelName;
+    }
+
+    /**
+     * 取得頻道權限
+     *
+     * @return 頻道權限
+     */
+    @Override
+    public @Nullable Permission getPermission() {
+        return this.permission == null ? null : new Permission(this.permission);
+    }
+
+    /**
+     * 判斷玩家是否有權限
+     *
+     * @param player 玩家
+     * @return 是否有權限
+     */
+    @Override
+    public boolean hasPermission(@NotNull Player player) {
+        if (this.permission == null) return true;
+        return player.hasPermission(this.permission);
     }
 
     /**
@@ -98,7 +124,10 @@ public class MBChannel implements IChannel {
      * @param player 玩家
      */
     protected boolean joinChannel(@NotNull Player player) {
-        return this.channel.joinPlayer(player, Channel.Mode.READ);
+        if (this.hasPermission(player))
+            return this.channel.joinPlayer(player, Channel.Mode.READ);
+        MouBieCat.getInstance(MessageYaml.class).sendFormatMessage(player, MessageYaml.Message.NOT_PERMISSION, this.channelName);
+        return false;
     }
 
     /**
@@ -149,6 +178,12 @@ public class MBChannel implements IChannel {
         if (message == null || message.isEmpty() || !this.checkPrefix(message))
             return false;
 
+        // 檢查頻道權限
+        if (!this.hasPermission(player))
+            // 權限訊息，交給 ChatControl 處理
+            return false;
+
+        // 處理發送訊息
         try {
             // 檢查訊息是否為頻道前綴
             final String finalMessage = message.substring(this.prefix.length());

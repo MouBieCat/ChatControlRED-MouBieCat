@@ -12,6 +12,7 @@ public final class MessageYaml extends Yaml {
         YOU_NOT_IN_CHANNEL("YouNotInChannel", "§fYou are not in the {0} channel."),
         YOU_JOIN_CHANNEL("YouJoinChannel", "§fYou have joined the§e {0} §fchannel."),
         YOU_LEAVE_CHANNEL("YouLeaveChannel", "§fYou have left the§e {0} §fchannel."),
+        NOT_PERMISSION("YouNotPermission", "§fYou do not have permission."),
         ;
 
         private final String path;
