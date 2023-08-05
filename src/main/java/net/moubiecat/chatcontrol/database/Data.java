@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public final class PlayerFirstChat {
+public final class Data {
     private final UUID player;
     private boolean first;
 
@@ -13,7 +13,7 @@ public final class PlayerFirstChat {
      *
      * @param player 玩家
      */
-    public PlayerFirstChat(@NotNull UUID player) {
+    public Data(@NotNull UUID player) {
         this(player, true);
     }
 
@@ -23,7 +23,7 @@ public final class PlayerFirstChat {
      * @param player 玩家
      * @param first  是否為第一次發言
      */
-    public PlayerFirstChat(@NotNull UUID player, boolean first) {
+    public Data(@NotNull UUID player, boolean first) {
         this.player = player;
         this.first = first;
     }

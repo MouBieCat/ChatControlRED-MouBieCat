@@ -10,7 +10,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class CommandListener implements Listener {
-    private @Inject ConfigYaml configYaml;
+    private final ConfigYaml configYaml;
+
+    @Inject
+    public CommandListener(@NotNull ConfigYaml configYaml) {
+        this.configYaml = configYaml;
+    }
 
     /**
      * 玩家輸入指令事件

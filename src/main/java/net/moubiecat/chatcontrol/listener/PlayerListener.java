@@ -2,8 +2,8 @@ package net.moubiecat.chatcontrol.listener;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.database.FirstChatDatabase;
-import net.moubiecat.chatcontrol.database.PlayerFirstChat;
+import net.moubiecat.chatcontrol.database.Data;
+import net.moubiecat.chatcontrol.database.DataMapper;
 import net.moubiecat.chatcontrol.injector.ChannelManager;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
@@ -22,11 +22,18 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class PlayerListener implements Listener {
-    private @Inject MouBieCat plugin;
-    private @Inject ChannelManager manager;
-    private @Inject FirstChatDatabase database;
+    private final MouBieCat plugin;
+    private final ChannelManager manager;
+    private final DataMapper dataMapper;
 
-    private final Map<UUID, PlayerFirstChat> playerFirstChatData = new HashMap<>();
+    private final Map<UUID, Data> playerFirstChatData = new HashMap<>();
+
+    @Inject
+    public PlayerListener(@NotNull MouBieCat plugin, @NotNull ChannelManager manager, @NotNull DataMapper database) {
+        this.plugin = plugin;
+        this.manager = manager;
+        this.dataMapper = database;
+    }
 
     /**
      * 玩家加入伺服器事件
@@ -36,10 +43,14 @@ public final class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        // 插入資料庫
-        database.insert(new PlayerFirstChat(player.getUniqueId(), true));
-        // 讀取資料庫，並插入快取
-        playerFirstChatData.put(player.getUniqueId(), database.select(player.getUniqueId().toString()));
+        final Data data = dataMapper.selectData(player.getUniqueId());
+        if (data == null) {
+            // 插入資料庫
+            dataMapper.insertData(new Data(player.getUniqueId()));
+            playerFirstChatData.put(player.getUniqueId(), dataMapper.selectData(player.getUniqueId()));
+        } else
+            // 讀取資料庫，並插入快取
+            playerFirstChatData.put(player.getUniqueId(), data);
     }
 
     /**
@@ -51,7 +62,7 @@ public final class PlayerListener implements Listener {
     public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         // 更新資料庫
-        database.update(playerFirstChatData.get(player.getUniqueId()));
+        dataMapper.updateData(playerFirstChatData.get(player.getUniqueId()));
         // 移除快取
         playerFirstChatData.remove(player.getUniqueId());
     }
@@ -66,7 +77,7 @@ public final class PlayerListener implements Listener {
         final Player player = event.getPlayer();
 
         // 獲取玩家快取資料
-        final PlayerFirstChat data = playerFirstChatData.get(player.getUniqueId());
+        final Data data = playerFirstChatData.get(player.getUniqueId());
         // 如果是第一次發言
         if (data.isFirst()) {
             event.setCancelled(true);

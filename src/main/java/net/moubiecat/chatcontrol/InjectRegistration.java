@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public final class InjectRegistration {
+    public static Injector INJECTOR = null;
+
     private final Map<Class, Object> instance = new ConcurrentHashMap<>();
     private final Map<Class, Map<Named, Object>> namedInstance = new ConcurrentHashMap<>();
     private final Map<Class, Class> implementation = new ConcurrentHashMap<>();
@@ -49,17 +51,14 @@ public final class InjectRegistration {
     }
 
     /**
-     * 創建注入器
-     *
-     * @return 注入器
+     * 綁定注入器
      */
-    @NotNull
-    public Injector createInjector() {
+    public void bindInjector() {
         final Injector instanceInjector = Guice.createInjector(
                 binder -> this.instance.forEach((clazz, plugin) -> binder.bind(clazz).toInstance(plugin)));
         final Injector namedInstanceInjector = instanceInjector.createChildInjector(
                 binder -> this.namedInstance.forEach((clazz, map) -> map.forEach((named, plugin) -> binder.bind(clazz).annotatedWith(named).toInstance(plugin))));
-        return namedInstanceInjector.createChildInjector(
+        INJECTOR = namedInstanceInjector.createChildInjector(
                 binder -> this.implementation.forEach((clazz, implementation) -> binder.bind(clazz).to(implementation)));
     }
 }
