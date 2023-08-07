@@ -5,16 +5,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public final class Data {
-    private final UUID player;
+    private final UUID uuid;
     private boolean first;
 
     /**
      * 建構子
      *
-     * @param player 玩家
+     * @param uuid 玩家
      */
-    public Data(@NotNull UUID player) {
-        this(player, true);
+    public Data(@NotNull UUID uuid) {
+        this(uuid, true);
     }
 
     /**
@@ -24,7 +24,7 @@ public final class Data {
      * @param first  是否為第一次發言
      */
     public Data(@NotNull UUID player, boolean first) {
-        this.player = player;
+        this.uuid = player;
         this.first = first;
     }
 
@@ -34,7 +34,7 @@ public final class Data {
      * @return 玩家
      */
     public @NotNull UUID getPlayer() {
-        return this.player;
+        return this.uuid;
     }
 
     /**

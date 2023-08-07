@@ -53,7 +53,7 @@ public final class DatabaseRegistration {
         final String line = config.getString("Line");
         // 建立資料源
         final DataSource dataSource = new PooledDataSource(
-                "com.mysql.jdbc.Driver",
+                "com.mysql.cj.jdbc.Driver",
                 line.replace("{host}", host).replace("{database}", database),
                 user, password);
         // 建立環境

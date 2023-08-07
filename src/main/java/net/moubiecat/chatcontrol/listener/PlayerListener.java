@@ -3,7 +3,7 @@ package net.moubiecat.chatcontrol.listener;
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
 import net.moubiecat.chatcontrol.database.Data;
-import net.moubiecat.chatcontrol.database.DataMapper;
+import net.moubiecat.chatcontrol.database.Database;
 import net.moubiecat.chatcontrol.injector.ChannelManager;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
@@ -24,15 +24,15 @@ import java.util.UUID;
 public final class PlayerListener implements Listener {
     private final MouBieCat plugin;
     private final ChannelManager manager;
-    private final DataMapper dataMapper;
+    private final Database database;
 
     private final Map<UUID, Data> playerFirstChatData = new HashMap<>();
 
     @Inject
-    public PlayerListener(@NotNull MouBieCat plugin, @NotNull ChannelManager manager, @NotNull DataMapper database) {
+    public PlayerListener(@NotNull MouBieCat plugin, @NotNull ChannelManager manager, @NotNull Database database) {
         this.plugin = plugin;
         this.manager = manager;
-        this.dataMapper = database;
+        this.database = database;
     }
 
     /**
@@ -43,11 +43,11 @@ public final class PlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        final Data data = dataMapper.selectData(player.getUniqueId());
+        final Data data = database.selectData(player.getUniqueId());
         if (data == null) {
             // 插入資料庫
-            dataMapper.insertData(new Data(player.getUniqueId()));
-            playerFirstChatData.put(player.getUniqueId(), dataMapper.selectData(player.getUniqueId()));
+            database.insertData(new Data(player.getUniqueId()));
+            playerFirstChatData.put(player.getUniqueId(), database.selectData(player.getUniqueId()));
         } else
             // 讀取資料庫，並插入快取
             playerFirstChatData.put(player.getUniqueId(), data);
@@ -62,7 +62,7 @@ public final class PlayerListener implements Listener {
     public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
         final Player player = event.getPlayer();
         // 更新資料庫
-        dataMapper.updateData(playerFirstChatData.get(player.getUniqueId()));
+        database.updateData(playerFirstChatData.get(player.getUniqueId()));
         // 移除快取
         playerFirstChatData.remove(player.getUniqueId());
     }

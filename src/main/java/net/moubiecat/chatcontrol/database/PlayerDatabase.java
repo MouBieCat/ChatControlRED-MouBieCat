@@ -7,19 +7,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public final class DataMapperImpl implements DataMapper {
+public final class PlayerDatabase implements Database {
     @Override
     public @Nullable Data selectData(@NotNull UUID player) {
-        try (SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
-            final DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+        try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
+            final Database dataMapper = sqlSession.getMapper(Database.class);
             return dataMapper.selectData(player);
         }
     }
 
     @Override
     public void insertData(@NotNull Data data) {
-        try (SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
-            final DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+        try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
+            final Database dataMapper = sqlSession.getMapper(Database.class);
             dataMapper.insertData(data);
             sqlSession.commit();
         }
@@ -27,8 +27,8 @@ public final class DataMapperImpl implements DataMapper {
 
     @Override
     public void updateData(@NotNull Data data) {
-        try (SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
-            final DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+        try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
+            final Database dataMapper = sqlSession.getMapper(Database.class);
             dataMapper.updateData(data);
             sqlSession.commit();
         }
@@ -36,8 +36,8 @@ public final class DataMapperImpl implements DataMapper {
 
     @Override
     public void deleteData(@NotNull UUID player) {
-        try (SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
-            final DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+        try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
+            final Database dataMapper = sqlSession.getMapper(Database.class);
             dataMapper.deleteData(player);
             sqlSession.commit();
         }

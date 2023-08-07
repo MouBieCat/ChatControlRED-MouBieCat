@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class InjectRegistration {
     public static Injector INJECTOR = null;
 
-    private final Map<Class, Object> instance = new ConcurrentHashMap<>();
-    private final Map<Class, Map<Named, Object>> namedInstance = new ConcurrentHashMap<>();
-    private final Map<Class, Class> implementation = new ConcurrentHashMap<>();
+    private final Map<Class, Object> instance = new HashMap<>();
+    private final Map<Class, Map<Named, Object>> namedInstance = new HashMap<>();
+    private final Map<Class, Class> implementation = new HashMap<>();
 
     /**
      * 註冊實例注入器

@@ -1,7 +1,7 @@
 package net.moubiecat.chatcontrol;
 
-import net.moubiecat.chatcontrol.database.DataMapper;
-import net.moubiecat.chatcontrol.database.DataMapperImpl;
+import net.moubiecat.chatcontrol.database.Database;
+import net.moubiecat.chatcontrol.database.PlayerDatabase;
 import net.moubiecat.chatcontrol.database.UUIDHandler;
 import net.moubiecat.chatcontrol.injector.ChannelManager;
 import net.moubiecat.chatcontrol.injector.ChannelYaml;
@@ -29,7 +29,7 @@ public final class MouBieCat extends JavaPlugin {
     public void onLoad() {
         // 資料庫依賴
         DATABASE_REGISTRATION.registerTypeHandler(UUID.class, UUIDHandler.class);
-        DATABASE_REGISTRATION.registerMapper(DataMapper.class);
+        DATABASE_REGISTRATION.registerMapper(Database.class);
         DATABASE_REGISTRATION.buildSqlSessionFactory();
         // 其它注入依賴
         INJECT_REGISTRATION.register(MouBieCat.class, this);
@@ -37,7 +37,7 @@ public final class MouBieCat extends JavaPlugin {
         INJECT_REGISTRATION.register(ChannelYaml.class, new ChannelYaml(this));
         INJECT_REGISTRATION.register(MessageYaml.class, new MessageYaml(this));
         INJECT_REGISTRATION.register(ChannelManager.class, new ChannelManager());
-        INJECT_REGISTRATION.register(DataMapper.class, new DataMapperImpl());
+        INJECT_REGISTRATION.register(Database.class, new PlayerDatabase());
         INJECT_REGISTRATION.bindInjector();
     }
 
