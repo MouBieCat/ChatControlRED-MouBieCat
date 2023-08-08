@@ -185,7 +185,6 @@ public class MBChannel implements IChannel {
 
         // 處理發送訊息
         try {
-            // 檢查訊息是否為頻道前綴
             final String finalMessage = message.substring(this.prefix.length());
             if (finalMessage.isEmpty())
                 return true;
