@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrol.utils;
+package net.moubiecat.chatcontrol.settings;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;

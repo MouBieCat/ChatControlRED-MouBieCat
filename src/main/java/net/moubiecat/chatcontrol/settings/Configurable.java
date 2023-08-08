@@ -1,4 +1,4 @@
-package net.moubiecat.chatcontrol.utils;
+package net.moubiecat.chatcontrol.settings;
 
 import org.jetbrains.annotations.NotNull;
 

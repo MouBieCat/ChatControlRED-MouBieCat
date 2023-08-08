@@ -1,11 +1,9 @@
-package net.moubiecat.chatcontrol.injector;
+package net.moubiecat.chatcontrol.channel;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.channel.IChannel;
-import net.moubiecat.chatcontrol.channel.MBChannel;
-import net.moubiecat.chatcontrol.channel.MBDefaultChannel;
-import net.moubiecat.chatcontrol.utils.Configurable;
+import net.moubiecat.chatcontrol.settings.ChannelYaml;
+import net.moubiecat.chatcontrol.settings.Configurable;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

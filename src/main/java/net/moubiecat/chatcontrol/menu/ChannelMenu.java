@@ -2,7 +2,7 @@ package net.moubiecat.chatcontrol.menu;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.injector.ChannelManager;
+import net.moubiecat.chatcontrol.channel.ChannelManager;
 import net.moubiecat.chatcontrol.services.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

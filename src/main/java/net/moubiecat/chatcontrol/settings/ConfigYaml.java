@@ -1,6 +1,6 @@
-package net.moubiecat.chatcontrol.injector;
+package net.moubiecat.chatcontrol.settings;
 
-import net.moubiecat.chatcontrol.utils.Yaml;
+import net.moubiecat.chatcontrol.settings.Yaml;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 

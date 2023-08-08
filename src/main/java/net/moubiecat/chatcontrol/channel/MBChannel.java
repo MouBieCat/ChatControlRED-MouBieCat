@@ -2,7 +2,7 @@ package net.moubiecat.chatcontrol.channel;
 
 import jdk.jfr.Description;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.injector.MessageYaml;
+import net.moubiecat.chatcontrol.settings.MessageYaml;
 import net.moubiecat.chatcontrol.services.ItemService;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

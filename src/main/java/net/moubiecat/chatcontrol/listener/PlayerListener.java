@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
 import net.moubiecat.chatcontrol.database.Data;
 import net.moubiecat.chatcontrol.database.Database;
-import net.moubiecat.chatcontrol.injector.ChannelManager;
+import net.moubiecat.chatcontrol.channel.ChannelManager;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;

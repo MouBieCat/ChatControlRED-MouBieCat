@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public final class InjectRegistration {
@@ -37,7 +36,7 @@ public final class InjectRegistration {
      * @param <T>      類別
      */
     public <T> void register(@NotNull Class<T> clazz, @NotNull Named named, @NotNull T instance) {
-        this.namedInstance.computeIfAbsent(clazz, k -> new ConcurrentHashMap<>()).put(named, instance);
+        this.namedInstance.computeIfAbsent(clazz, k -> new HashMap<>()).put(named, instance);
     }
 
     /**

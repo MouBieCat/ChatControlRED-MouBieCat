@@ -2,7 +2,7 @@ package net.moubiecat.chatcontrol.listener;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.injector.ConfigYaml;
+import net.moubiecat.chatcontrol.settings.ConfigYaml;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
