@@ -9,6 +9,9 @@ import java.util.UUID;
 public interface Database {
     String TABLE_NAME = "ChatControl_First";
 
+    @Update("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (UUID VARCHAR(36) NOT NULL PRIMARY KEY, FIRST BOOLEAN NOT NULL)")
+    void createTable();
+
     @Select("SELECT * FROM " + TABLE_NAME + " WHERE UUID = #{uuid}")
     @Results({
             @Result(column = "UUID", property = "uuid", javaType = UUID.class),

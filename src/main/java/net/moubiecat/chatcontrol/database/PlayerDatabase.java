@@ -9,6 +9,15 @@ import java.util.UUID;
 
 public final class PlayerDatabase implements Database {
     @Override
+    public void createTable() {
+        try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
+            final Database dataMapper = sqlSession.getMapper(Database.class);
+            dataMapper.createTable();
+            sqlSession.commit();
+        }
+    }
+
+    @Override
     public @Nullable Data selectData(@NotNull UUID player) {
         try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
             final Database dataMapper = sqlSession.getMapper(Database.class);

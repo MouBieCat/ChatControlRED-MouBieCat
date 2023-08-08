@@ -1,16 +1,16 @@
 package net.moubiecat.chatcontrol;
 
+import net.moubiecat.chatcontrol.channel.ChannelManager;
 import net.moubiecat.chatcontrol.database.Database;
 import net.moubiecat.chatcontrol.database.PlayerDatabase;
 import net.moubiecat.chatcontrol.database.UUIDHandler;
-import net.moubiecat.chatcontrol.channel.ChannelManager;
-import net.moubiecat.chatcontrol.settings.ChannelYaml;
-import net.moubiecat.chatcontrol.settings.ConfigYaml;
-import net.moubiecat.chatcontrol.settings.MessageYaml;
 import net.moubiecat.chatcontrol.listener.CommandListener;
 import net.moubiecat.chatcontrol.listener.InventoryListener;
 import net.moubiecat.chatcontrol.listener.PlayerListener;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
+import net.moubiecat.chatcontrol.settings.ChannelYaml;
+import net.moubiecat.chatcontrol.settings.ConfigYaml;
+import net.moubiecat.chatcontrol.settings.MessageYaml;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -43,6 +43,8 @@ public final class MouBieCat extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // 創建 MySQL 資料庫
+        InjectRegistration.INJECTOR.getInstance(Database.class).createTable();
         // 加載頻道配置檔
         InjectRegistration.INJECTOR.getInstance(ChannelManager.class)
                 .getParser()

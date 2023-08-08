@@ -81,8 +81,12 @@ public final class ChannelManager {
     }
 
     public final static class ChannelConfiguration implements Configurable<ChannelYaml> {
+        private final ChannelManager manager;
+
         @Inject
-        private ChannelManager manager;
+        ChannelConfiguration(@NotNull ChannelManager manager) {
+            this.manager = manager;
+        }
 
         /**
          * Load config
