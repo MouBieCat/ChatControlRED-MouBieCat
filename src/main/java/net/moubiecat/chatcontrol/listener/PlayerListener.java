@@ -2,9 +2,9 @@ package net.moubiecat.chatcontrol.listener;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
+import net.moubiecat.chatcontrol.channel.ChannelManager;
 import net.moubiecat.chatcontrol.database.Data;
 import net.moubiecat.chatcontrol.database.Database;
-import net.moubiecat.chatcontrol.channel.ChannelManager;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -22,18 +22,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class PlayerListener implements Listener {
-    private final MouBieCat plugin;
-    private final ChannelManager manager;
-    private final Database database;
-
+    private @Inject MouBieCat plugin;
+    private @Inject ChannelManager manager;
+    private @Inject Database database;
     private final Map<UUID, Data> playerFirstChatData = new HashMap<>();
-
-    @Inject
-    public PlayerListener(@NotNull MouBieCat plugin, @NotNull ChannelManager manager, @NotNull Database database) {
-        this.plugin = plugin;
-        this.manager = manager;
-        this.database = database;
-    }
 
     /**
      * 玩家加入伺服器事件

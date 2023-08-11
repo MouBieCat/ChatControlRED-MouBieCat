@@ -30,12 +30,12 @@ public final class MouBieCat extends JavaPlugin {
         DATABASE_REGISTRATION.registerMapper(Database.class);
         DATABASE_REGISTRATION.buildSqlSessionFactory();
         // 其它注入依賴
-        INJECT_REGISTRATION.register(MouBieCat.class, this);
-        INJECT_REGISTRATION.register(ConfigYaml.class, new ConfigYaml(this));
-        INJECT_REGISTRATION.register(ChannelYaml.class, new ChannelYaml(this));
-        INJECT_REGISTRATION.register(MessageYaml.class, new MessageYaml(this));
-        INJECT_REGISTRATION.register(ChannelManager.class, new ChannelManager());
-        INJECT_REGISTRATION.register(Database.class, new PlayerDatabase());
+        INJECT_REGISTRATION.bindPluginInstance(MouBieCat.class, this);
+        INJECT_REGISTRATION.bindInstance(ConfigYaml.class, new ConfigYaml(this));
+        INJECT_REGISTRATION.bindInstance(ChannelYaml.class, new ChannelYaml(this));
+        INJECT_REGISTRATION.bindInstance(MessageYaml.class, new MessageYaml(this));
+        INJECT_REGISTRATION.bindInstance(ChannelManager.class, new ChannelManager());
+        INJECT_REGISTRATION.bindInstance(Database.class, new PlayerDatabase());
         INJECT_REGISTRATION.bindInjector();
 
         // 創建 MySQL 資料庫
@@ -80,8 +80,7 @@ public final class MouBieCat extends JavaPlugin {
      * @param <T>   類型
      * @return 實例
      */
-    @NotNull
-    public static <T> T getInstance(@NotNull Class<T> clazz) {
+    public static <T> @NotNull T getInstance(@NotNull Class<T> clazz) {
         return InjectRegistration.INJECTOR.getInstance(clazz);
     }
 
@@ -90,9 +89,12 @@ public final class MouBieCat extends JavaPlugin {
      *
      * @return SqlSessionFactory
      */
-    @NotNull
-    public static SqlSessionFactory getSqlSessionFactory() {
+    public static @NotNull SqlSessionFactory getSqlSessionFactory() {
         return DatabaseRegistration.SQL_SESSION_FACTORY;
+    }
+
+    public static @NotNull MouBieCat getPlugin() {
+        return getPlugin(MouBieCat.class);
     }
 
     /**

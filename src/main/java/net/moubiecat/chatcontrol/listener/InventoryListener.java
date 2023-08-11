@@ -19,8 +19,8 @@ public final class InventoryListener implements Listener {
     public void onInventoryOpen(@NotNull InventoryOpenEvent event) {
         final InventoryHolder holder = event.getInventory().getHolder();
 
-        if (holder instanceof MenuHandler) {
-            ((MenuHandler) holder).onOpen(event);
+        if (holder instanceof MenuHandler menuHandler) {
+            menuHandler.onInventoryOpen(event);
         }
     }
 
@@ -33,8 +33,8 @@ public final class InventoryListener implements Listener {
     public void onInventoryClick(@NotNull InventoryClickEvent event) {
         final InventoryHolder holder = event.getInventory().getHolder();
 
-        if (holder instanceof MenuHandler && event.getCurrentItem() != null) {
-            ((MenuHandler) holder).onClick(event);
+        if (holder instanceof MenuHandler menuHandler && event.getCurrentItem() != null) {
+            menuHandler.onInventoryClick(event);
         }
     }
 
@@ -47,8 +47,8 @@ public final class InventoryListener implements Listener {
     public void onInventoryClose(@NotNull InventoryCloseEvent event) {
         final InventoryHolder holder = event.getInventory().getHolder();
 
-        if (holder instanceof MenuHandler) {
-            ((MenuHandler) holder).onClose(event);
+        if (holder instanceof MenuHandler menuHandler) {
+            menuHandler.onInventoryClose(event);
         }
     }
 }

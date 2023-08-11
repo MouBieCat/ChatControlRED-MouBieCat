@@ -95,7 +95,7 @@
             <dependency>
                 <groupId>org.mineacademy</groupId>
                 <artifactId>ChatControl-Red</artifactId>
-                <version>10.19.4</version>
+                <version>10.19.8</version>
                 <scope>provided</scope>
                 <exclusions>
                     <exclusion>
@@ -151,9 +151,6 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>plugin.yml</include>
-                    <include>config.yml</include>
-                    <include>channels.yml</include>
-                    <include>message.yml</include>
                 </includes>
             </resource>
             <!-- 資源 -->

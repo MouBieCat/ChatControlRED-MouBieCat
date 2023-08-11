@@ -2,20 +2,15 @@ package net.moubiecat.chatcontrol.listener;
 
 import com.google.inject.Inject;
 import net.moubiecat.chatcontrol.MouBieCat;
-import net.moubiecat.chatcontrol.settings.ConfigYaml;
 import net.moubiecat.chatcontrol.menu.ChannelMenu;
+import net.moubiecat.chatcontrol.settings.ConfigYaml;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class CommandListener implements Listener {
-    private final ConfigYaml configYaml;
-
-    @Inject
-    public CommandListener(@NotNull ConfigYaml configYaml) {
-        this.configYaml = configYaml;
-    }
+    private @Inject ConfigYaml configYaml;
 
     /**
      * 玩家輸入指令事件

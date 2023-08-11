@@ -12,34 +12,16 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class Menu implements InventoryHolder, MenuHandler {
     protected final Inventory inventory;
-    protected final MenuSize size;
-
-    protected final int max;
     private int page = 1;
 
     /**
      * 建構子
      *
-     * @param title 選單標題
-     * @param max   最大頁數
      * @param size  選單大小
+     * @param title 選單標題
      */
-    public Menu(@NotNull String title, int max, MenuSize size) {
-        this.max = max;
-        this.size = size;
-        this.inventory = Bukkit.createInventory(this, this.size.getSize(), title);
-    }
-
-    /**
-     * 檢查頁數是否合理
-     * 若不合理則將頁數設置為最大或最小值
-     */
-    private void checkPage() {
-        // 檢查頁數是否合理
-        if (this.page > this.max)
-            this.page = this.max;
-        else if (this.page < 1)
-            this.page = 1;
+    public Menu(@NotNull MenuSize size, @NotNull String title) {
+        this.inventory = Bukkit.createInventory(this, size.getSize(), title);
     }
 
     /**
@@ -48,9 +30,8 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param viewer 開啟選單的玩家
      */
     public final void open(@NotNull Player viewer) {
-        this.checkPage();
         viewer.openInventory(this.inventory);
-        this.initialize(viewer, this.page);
+        this.refresh(viewer);
     }
 
     /**
@@ -59,7 +40,6 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param viewer 開啟選單的玩家
      */
     public final void refresh(@NotNull Player viewer) {
-        this.checkPage();
         this.initialize(viewer, this.page);
     }
 
@@ -69,11 +49,10 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param viewer 開啟選單的玩家
      */
     public final void next(@NotNull Player viewer) {
+        if (!this.hasNextPage(viewer, this.page))
+            return;
         this.page++;
-        this.refresh(viewer);
-        this.inventory.getViewers().stream()
-                .filter(humanEntity -> humanEntity instanceof Player)
-                .forEach(humanEntity -> ((Player) humanEntity).playSound(humanEntity, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5.0f, 5.0f));
+        viewer.playSound(viewer.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
     }
 
     /**
@@ -82,28 +61,38 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param viewer 開啟選單的玩家
      */
     public final void previous(@NotNull Player viewer) {
+        if (this.page <= 1)
+            return;
         this.page--;
-        this.refresh(viewer);
-        this.inventory.getViewers().stream()
-                .filter(humanEntity -> humanEntity instanceof Player)
-                .forEach(humanEntity -> ((Player) humanEntity).playSound(humanEntity, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f));
+        viewer.playSound(viewer.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1.0f, 1.0f);
     }
 
     /**
      * 初始化選單內容
      *
+     * @param view 開啟選單的玩家
      * @param page 頁數
      */
     protected abstract void initialize(@NotNull Player view, int page);
+
+    /**
+     * 是否有下一頁
+     *
+     * @param player 開啟選單的玩家
+     * @param page   頁數
+     * @return 是否有下一頁
+     */
+    protected boolean hasNextPage(@NotNull Player player, int page) {
+        return false;
+    }
 
     /**
      * 取得選單實例
      *
      * @return 選單實例
      */
-    @NotNull
     @Override
-    public final Inventory getInventory() {
+    public final @NotNull Inventory getInventory() {
         return this.inventory;
     }
 
@@ -113,7 +102,7 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param event 事件
      */
     @Override
-    public void onOpen(@NotNull InventoryOpenEvent event) {
+    public void onInventoryOpen(@NotNull InventoryOpenEvent event) {
     }
 
     /**
@@ -122,7 +111,7 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param event 事件
      */
     @Override
-    public void onClick(@NotNull InventoryClickEvent event) {
+    public void onInventoryClick(@NotNull InventoryClickEvent event) {
     }
 
     /**
@@ -131,6 +120,6 @@ public abstract class Menu implements InventoryHolder, MenuHandler {
      * @param event 事件
      */
     @Override
-    public void onClose(@NotNull InventoryCloseEvent event) {
+    public void onInventoryClose(@NotNull InventoryCloseEvent event) {
     }
 }

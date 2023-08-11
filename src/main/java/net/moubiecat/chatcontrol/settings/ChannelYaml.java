@@ -19,6 +19,10 @@ public final class ChannelYaml extends Yaml {
         super(plugin, "channels.yml");
     }
 
+    public @NotNull String getInventoryTitle() {
+        return this.configuration.getString("Title", "");
+    }
+
     public @NotNull Set<String> getChannelNames() {
         final ConfigurationSection list = this.configuration.getConfigurationSection("List");
         return list == null ? Set.of() : list.getKeys(false);

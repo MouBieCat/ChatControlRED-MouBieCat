@@ -11,19 +11,19 @@ public interface MenuHandler {
      *
      * @param event 事件
      */
-    void onOpen(@NotNull InventoryOpenEvent event);
+    void onInventoryOpen(@NotNull InventoryOpenEvent event);
 
     /**
      * 選單點選時觸發
      *
      * @param event 事件
      */
-    void onClick(@NotNull InventoryClickEvent event);
+    void onInventoryClick(@NotNull InventoryClickEvent event);
 
     /**
      * 選單關閉時觸發
      *
      * @param event 事件
      */
-    void onClose(@NotNull InventoryCloseEvent event);
+    void onInventoryClose(@NotNull InventoryCloseEvent event);
 }
