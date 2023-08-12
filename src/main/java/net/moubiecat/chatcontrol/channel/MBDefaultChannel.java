@@ -8,7 +8,7 @@ import org.mineacademy.chatcontrol.model.Channel;
 
 import java.util.List;
 
-public final class MBDefaultChannel extends MBChannel {
+final class MBDefaultChannel extends MBChannel {
     /**
      * 建構子
      *

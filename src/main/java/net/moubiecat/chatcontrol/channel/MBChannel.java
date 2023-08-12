@@ -20,7 +20,7 @@ import org.mineacademy.chatcontrol.model.Channel;
 
 import java.util.List;
 
-public class MBChannel implements IChannel {
+class MBChannel implements IChannel {
     private final String prefix;
     private final String channelName;
     private final String permission;
