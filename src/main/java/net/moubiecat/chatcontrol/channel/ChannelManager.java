@@ -15,7 +15,15 @@ import java.util.List;
 import java.util.Optional;
 
 public final class ChannelManager {
+    private static final ChannelManager INSTANCE = new ChannelManager();
     private final List<IChannel> channels = new LinkedList<>();
+
+    /**
+     * 建構子
+     * 這裡不允許外部實例化
+     */
+    ChannelManager() {
+    }
 
     /**
      * 添加頻道
@@ -69,6 +77,15 @@ public final class ChannelManager {
 
         // 執行到這裡，一定是 MBDefaultChannel，所以直接返回 false
         return false;
+    }
+
+    /**
+     * 取得頻道管理器
+     *
+     * @return 頻道管理器
+     */
+    public static @NotNull ChannelManager getInstance() {
+        return INSTANCE;
     }
 
     /**

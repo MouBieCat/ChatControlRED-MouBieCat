@@ -8,6 +8,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public final class PlayerDatabase implements Database {
+    private static final PlayerDatabase INSTANCE = new PlayerDatabase();
+
+    /**
+     * 建構子
+     * 這裡不允許外部實例化
+     */
+    PlayerDatabase() {
+    }
+
     @Override
     public void createTable() {
         try (final SqlSession sqlSession = MouBieCat.getSqlSessionFactory().openSession()) {
@@ -50,5 +59,14 @@ public final class PlayerDatabase implements Database {
             dataMapper.deleteData(player);
             sqlSession.commit();
         }
+    }
+
+    /**
+     * 取得實例
+     *
+     * @return 實例
+     */
+    public static @NotNull PlayerDatabase getInstance() {
+        return INSTANCE;
     }
 }

@@ -34,16 +34,14 @@ public final class MouBieCat extends JavaPlugin {
         INJECT_REGISTRATION.bindInstance(ConfigYaml.class, new ConfigYaml(this));
         INJECT_REGISTRATION.bindInstance(ChannelYaml.class, new ChannelYaml(this));
         INJECT_REGISTRATION.bindInstance(MessageYaml.class, new MessageYaml(this));
-        INJECT_REGISTRATION.bindInstance(ChannelManager.class, new ChannelManager());
-        INJECT_REGISTRATION.bindInstance(Database.class, new PlayerDatabase());
+        INJECT_REGISTRATION.bindInstance(ChannelManager.class, ChannelManager.getInstance());
+        INJECT_REGISTRATION.bindInstance(Database.class, PlayerDatabase.getInstance());
         INJECT_REGISTRATION.bindInjector();
 
         // 創建 MySQL 資料庫
-        InjectRegistration.INJECTOR.getInstance(Database.class).createTable();
+        PlayerDatabase.getInstance().createTable();
         // 加載頻道配置檔
-        InjectRegistration.INJECTOR.getInstance(ChannelManager.class)
-                .getParser()
-                .onLoad(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
+        ChannelManager.getInstance().getParser().onLoad(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
         // 註冊事件
         Bukkit.getPluginManager().registerEvents(InjectRegistration.INJECTOR.getInstance(InventoryListener.class), this);
         Bukkit.getPluginManager().registerEvents(InjectRegistration.INJECTOR.getInstance(PlayerListener.class), this);
@@ -53,9 +51,7 @@ public final class MouBieCat extends JavaPlugin {
     @Override
     public void onDisable() {
         // 保存頻道配置檔
-        InjectRegistration.INJECTOR.getInstance(ChannelManager.class)
-                .getParser()
-                .onSave(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
+        ChannelManager.getInstance().getParser().onSave(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
         // 保存配置檔
         InjectRegistration.INJECTOR.getInstance(ConfigYaml.class).save();
         InjectRegistration.INJECTOR.getInstance(ChannelYaml.class).save();
@@ -68,9 +64,7 @@ public final class MouBieCat extends JavaPlugin {
         InjectRegistration.INJECTOR.getInstance(ChannelYaml.class).load();
         InjectRegistration.INJECTOR.getInstance(MessageYaml.class).load();
         // 重載頻道配置檔
-        InjectRegistration.INJECTOR.getInstance(ChannelManager.class)
-                .getParser()
-                .onReload(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
+        ChannelManager.getInstance().getParser().onReload(InjectRegistration.INJECTOR.getInstance(ChannelYaml.class));
     }
 
     /**
@@ -93,6 +87,11 @@ public final class MouBieCat extends JavaPlugin {
         return DatabaseRegistration.SQL_SESSION_FACTORY;
     }
 
+    /**
+     * 取得插件實例
+     *
+     * @return 插件實例
+     */
     public static @NotNull MouBieCat getPlugin() {
         return getPlugin(MouBieCat.class);
     }
